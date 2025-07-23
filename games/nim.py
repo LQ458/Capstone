@@ -10,21 +10,21 @@ class NimGame:
         self.visited_nodes = 0  # For performance tracking
         self.move_history = []  # Track game moves
         
-    def make_move(self, pile_idx, stones):
-        """Validate and execute a move"""
-        if 0 <= pile_idx < len(self.piles) and 1 <= stones <= self.piles[pile_idx]:
-            move = (pile_idx, stones, self.piles[pile_idx])
-            self.piles[pile_idx] -= stones
+    def make_move(self, idx, stones):
+        # Validate and execute a move
+        if 0 <= idx < len(self.piles) and 1 <= stones <= self.piles[idx]:
+            move = (idx, stones, self.piles[idx])
+            self.piles[idx] -= stones
             self.move_history.append(move)
             return True
         return False
     
     def is_game_over(self):
-        """Check if all piles are empty"""
+        #Check if all piles are empty
         return all(pile == 0 for pile in self.piles)
     
     def generate_moves(self):
-        """Generate all legal moves from current state"""
+        #Generate all legal moves
         moves = []
         for pile_idx, stones in enumerate(self.piles):
             for take in range(1, stones + 1):
@@ -32,31 +32,29 @@ class NimGame:
         return moves
     
     def copy(self):
-        """Create a deep copy of the game state"""
+        #Copy current state
         new_game = NimGame(self.piles)
         new_game.visited_nodes = self.visited_nodes
         new_game.move_history = self.move_history.copy()
         return new_game
     
     def display(self):
-        """Print current game state"""
+        #Print current game state
         print("\nCurrent piles:")
         for i, stones in enumerate(self.piles):
             print(f"Pile {i}: {'O ' * stones}({stones})")
         print(f"Nim-sum: {calculate_nim_sum(self.piles)}")
 
 def calculate_nim_sum(piles):
-    """Calculate the XOR of all pile sizes"""
+    #Calculate the XOR of all pile sizes
     nim_sum = 0
     for pile in piles:
         nim_sum ^= pile
     return nim_sum
 
-def optimal_nim_move(piles):
-    """
-    Find the optimal move using Nim-sum strategy
-    Returns (pile_index, stones_to_take) or None if in losing position
-    """
+def optimal_nim_move(piles): 
+    #Find the optimal move using Nim-sum strategy
+    #Returns (pile_index, stones_to_take) or None if in losing position
     nim_sum = calculate_nim_sum(piles)
     if nim_sum == 0:
         return None  # Losing position
@@ -68,7 +66,7 @@ def optimal_nim_move(piles):
     return None
 
 def minimax(game_state, depth, is_maximizing, alpha=float('-inf'), beta=float('inf')):
-    """Minimax algorithm with alpha-beta pruning and depth limiting"""
+    #Minimax algorithm with alpha-beta pruning and depth limiting
     game_state.visited_nodes += 1
     
     # Base case: terminal state
@@ -104,10 +102,8 @@ def minimax(game_state, depth, is_maximizing, alpha=float('-inf'), beta=float('i
         return min_eval
 
 def find_best_move(game_state, depth=8, use_nim_sum=True):
-    """
-    Find the best move using Nim-sum strategy if possible,
-    otherwise fall back to depth-limited minimax.
-    """
+    #Find the best move using Nim-sum strategy if possible,
+    #otherwise fall back to depth-limited minimax.
     # First try mathematical optimal strategy if enabled
     if use_nim_sum:
         math_move = optimal_nim_move(game_state.piles)
@@ -131,16 +127,14 @@ def find_best_move(game_state, depth=8, use_nim_sum=True):
     return best_move, game_state.visited_nodes
 
 def random_move(game_state):
-    """Select a random valid move"""
+    #Select a random valid move
     moves = game_state.generate_moves()
     return random.choice(moves) if moves else None
 
 def simulate_game(agent1_type="minimax", agent2_type="random", initial_piles=[3, 4, 5], 
                   depth=8, verbose=False):
-    """
-    Simulate a single game between two agents
-    Returns: (winner, game_length, moves_history, nodes_evaluated)
-    """
+    #Simulate a single game between two agents
+    #Returns: (winner, game_length, moves_history, nodes_evaluated)
     game = NimGame(initial_piles)
     current_player = 1
     total_nodes = 0
@@ -186,9 +180,7 @@ def simulate_game(agent1_type="minimax", agent2_type="random", initial_piles=[3,
 
 def run_simulation_batch(num_games=100, agent1_type="minimax", agent2_type="random", 
                         initial_piles=[3, 4, 5], depth=8):
-    """
-    Run a batch of simulations and collect statistics
-    """
+    #Run a batch of simulations and collect statistics
     results = {
         'agent1_wins': 0,
         'agent2_wins': 0,
@@ -238,7 +230,7 @@ def run_simulation_batch(num_games=100, agent1_type="minimax", agent2_type="rand
     return results
 
 def analyze_depth_performance(depths=[2, 4, 6, 8, 10], num_games=50, initial_piles=[3, 4, 5]):
-    """Analyze performance across different search depths"""
+    #Analyze performance across different search depths
     depth_results = {}
     
     for depth in depths:
@@ -261,7 +253,7 @@ def analyze_depth_performance(depths=[2, 4, 6, 8, 10], num_games=50, initial_pil
     return depth_results
 
 def save_simulation_results(results, filename=None):
-    """Save simulation results to JSON file"""
+    #Save results
     if filename is None:
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         filename = f"output/text/nim_simulation_results_{timestamp}.json"
@@ -277,7 +269,7 @@ def save_simulation_results(results, filename=None):
     return filename
 
 def ai_vs_ai_game(initial_piles=[3, 4, 5], depth=8):
-    """Run an interactive game between two AI players"""
+    #AI vs AI
     print("Starting Nim Game with two AI players")
     print("The player who takes the last stone wins!\n")
     
@@ -294,7 +286,7 @@ def ai_vs_ai_game(initial_piles=[3, 4, 5], depth=8):
     return winner, length, moves, nodes
 
 def comprehensive_nim_analysis():
-    """Run comprehensive analysis of Nim game performance"""
+    #Run comprehensive analysis of Nim game performance
     print("=" * 60)
     print("COMPREHENSIVE NIM GAME ANALYSIS")
     print("=" * 60)
