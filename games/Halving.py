@@ -71,7 +71,7 @@ class HalvingGame:
         print(f"Game over! Player {winner} wins!")
 
 
-initial_number = 2  # Default initial number
+initial_number = 20  # Default initial number
 
 game = HalvingGame(initial_number)
 game.play_game()
