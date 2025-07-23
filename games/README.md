@@ -39,6 +39,11 @@ games/
 - **Algorithm**: Minimax with mathematical strategy
 - **Features**: Exponential state space, optimal strategy analysis
 
+### Nim Game
+- **File**: `nim.py`
+- **Algorithm**: Minimax with Nim-sum heuristic
+- **Features**: Perfect mathematical play, comprehensive simulation and analysis modules
+
 ## Usage
 
 Each game can be run independently:
@@ -52,6 +57,9 @@ python connect4.py
 
 # Halving Game
 python Halving.py
+
+# Nim Game
+python nim.py
 ```
 
 ## Simulation and Analysis

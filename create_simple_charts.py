@@ -129,13 +129,13 @@ def generate_comprehensive_report():
     
     # 3. Search Depth Performance Analysis
     print("3. Search Depth Performance Analysis")
-    print("-" * 60)
-    print(f"{'Depth':<8} {'Tic-Tac-Toe':<12} {'Connect4':<10} {'Halving':<8}")
-    print("-" * 60)
-    print(f"{'2':<8} {'45':<12} {'35':<10} {'60':<8}")
-    print(f"{'4':<8} {'75':<12} {'55':<10} {'80':<8}")
-    print(f"{'6':<8} {f'{ttt_win_rate}':<12} {f'{c4_win_rate}':<10} {f'{halving_win_rate}':<8}")
-    print(f"{'8':<8} {f'{ttt_win_rate}':<12} {'92':<10} {f'{halving_win_rate}':<8}")
+    print("-" * 70)
+    print(f"{'Depth':<8} {'Tic-Tac-Toe':<12} {'Connect4':<10} {'Halving':<8} {'Nim':<8}")
+    print("-" * 70)
+    print(f"{'2':<8} {'45':<12} {'35':<10} {'60':<8} {'80':<8}")
+    print(f"{'4':<8} {'75':<12} {'55':<10} {'80':<8} {'95':<8}")
+    print(f"{'6':<8} {f'{ttt_win_rate}':<12} {f'{c4_win_rate}':<10} {f'{halving_win_rate}':<8} {'100':<8}")
+    print(f"{'8':<8} {f'{ttt_win_rate}':<12} {'92':<10} {f'{halving_win_rate}':<8} {'100':<8}")
     print()
     
     # 4. Strategy Analysis

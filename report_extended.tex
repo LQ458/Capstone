@@ -51,6 +51,8 @@ Tic-Tac-Toe is a deterministic, finite two-player game with complete information
     \item Deterministic with no element of chance
 \end{itemize}
 
+\textbf{Tic-Tac-Toe Strategy:} With perfect play from both sides, the game always ends in a draw. Optimal moves prioritize center and corners. The center position provides the most winning opportunities (4 lines), corners provide 3 lines each, and edges provide only 2 lines each.
+
 \subsection{Connect4}
 
 Connect4 is a two-player connection game in which players take turns dropping colored discs into a 6×7 grid. The objective is to connect four of one's own discs of the same color next to each other vertically, horizontally, or diagonally.
@@ -82,6 +84,8 @@ The game ends when the number reaches 1. The player who makes the final move (re
     \item Deterministic with mathematical strategy elements
 \end{itemize}
 
+\textbf{Halving Game Strategy:} The first player always wins if the initial number is odd. This is because odd numbers maintain winning positions under optimal play, while even numbers can lead to losing positions depending on the opponent's strategy.
+
 \subsection{Nim Game}
 
 Nim is a mathematical strategy game where two players take turns removing objects from heaps (or piles). The standard rules implemented in our project are:
@@ -102,11 +106,13 @@ Nim is a mathematical strategy game where two players take turns removing object
 
 The optimal strategy involves calculating the binary digital sum (Nim-sum) of heap sizes. A position with Nim-sum $\neq$ 0 is winning for the player about to move. The Nim-sum is computed using bitwise XOR operations on the pile sizes.
 
+\textbf{Nim Game Strategy:} If the XOR of all heaps is not zero on the first move, the player can win by making the XOR zero. Otherwise, the player is in a losing position. The optimal move from a winning position is to select a pile and remove stones such that the resulting Nim-sum becomes zero.
+
 \section{Agent Design and Implementation}
 
 \subsection{Search Algorithms}
 
-We implemented advanced search algorithms across all three games, with optimizations tailored to each game's specific characteristics.
+We implemented advanced search algorithms across all four games, with optimizations tailored to each game's specific characteristics.
 
 \subsubsection{Minimax with Alpha-Beta Pruning}
 
@@ -375,7 +381,7 @@ Our Tic-Tac-Toe implementation achieved excellent performance:
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.8\textwidth]{output/win_rates.png}
+\includegraphics[width=0.8\textwidth]{output/images/win_rates.png}
 \caption{Tic-Tac-Toe AI performance against different opponent types}
 \label{fig:ttt_win_rates}
 \end{figure}
@@ -410,7 +416,7 @@ The Halving Game revealed interesting mathematical patterns:
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.8\textwidth]{output/halving_win_rates.png}
+\includegraphics[width=0.8\textwidth]{output/images/halving_win_rates.png}
 \caption{Halving Game win rates for different initial numbers}
 \label{fig:halving_win_rates}
 \end{figure}
@@ -436,9 +442,23 @@ The Nim game results validate the mathematical theory:
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.8\textwidth]{output/nim_performance.png}
-\caption{Nim Game performance analysis showing optimal play patterns}
+\includegraphics[width=0.8\textwidth]{output/images/nim_performance_analysis.png}
+\caption{Nim Game performance analysis showing optimal play patterns and strategy effectiveness}
 \label{fig:nim_performance}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{output/images/nim_strategy_analysis.png}
+\caption{Nim Game strategy analysis including Nim-sum calculations and decision processes}
+\label{fig:nim_strategy}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{output/images/nim_mathematical_insights.png}
+\caption{Mathematical insights and theoretical validation for Nim game strategies}
+\label{fig:nim_mathematical}
 \end{figure}
 
 \subsection{Comparative Analysis}
@@ -465,7 +485,7 @@ Nim Game & Finite & 100\% & 12 moves \\
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.8\textwidth]{output/performance_metrics.png}
+\includegraphics[width=0.8\textwidth]{output/images/performance_metrics.png}
 \caption{Performance scaling with search depth and game complexity}
 \label{fig:performance_scaling}
 \end{figure}
@@ -477,7 +497,7 @@ Nim Game & Finite & 100\% & 12 moves \\
 Our results demonstrate that minimax search with alpha-beta pruning is highly effective across different game domains:
 
 \begin{enumerate}
-    \item \textbf{Consistent Performance}: All three games show strong AI performance against random opponents
+    \item \textbf{Consistent Performance}: All four games show strong AI performance against random opponents
     \item \textbf{Scalability}: The algorithm scales well with game complexity
     \item \textbf{Optimal Play}: When both players use optimal strategies, results approach theoretical expectations
 \end{enumerate}
@@ -567,6 +587,6 @@ This research contributes to the broader field of artificial intelligence and ga
     \item Contributing to the development of more sophisticated game-playing systems
 \end{itemize}
 
-The successful implementation and analysis of these three games provides a solid foundation for future research in computational game theory and artificial intelligence.
+The successful implementation and analysis of these four games provides a solid foundation for future research in computational game theory and artificial intelligence.
 
 \end{document} 
