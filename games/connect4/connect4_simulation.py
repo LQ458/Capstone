@@ -46,7 +46,7 @@ class Connect4Simulation:
                 
                 moves += 1
                 
-                # 检查游戏是否结束
+                # Check if game is over
                 if c4f.win(self.game.bitboard['X']):
                     ai_wins += 1
                     break
@@ -114,7 +114,7 @@ class Connect4Simulation:
             total_moves += moves
             
             if (game_num + 1) % 10 == 0:
-                print(f"已完成 {game_num + 1}/{num_games} 局游戏")
+                print(f"Completed {game_num + 1}/{num_games} games")
         
         results = {
             'ai1_wins': ai1_wins,
@@ -126,31 +126,31 @@ class Connect4Simulation:
             'ai2_win_rate': (ai2_wins / num_games) * 100
         }
         
-        print(f"深度{depth1} AI胜率: {results['ai1_win_rate']:.1f}%")
-        print(f"深度{depth2} AI胜率: {results['ai2_win_rate']:.1f}%")
-        print(f"平均每局移动数: {results['avg_moves']:.1f}")
+        print(f"Depth {depth1} AI win rate: {results['ai1_win_rate']:.1f}%")
+        print(f"Depth {depth2} AI win rate: {results['ai2_win_rate']:.1f}%")
+        print(f"Average moves per game: {results['avg_moves']:.1f}")
         
         return results
     
     def analyze_opening_moves(self, num_games=100, ai_depth=6):
-        """分析开局移动的分布"""
-        print(f"分析开局移动分布，共{num_games}局游戏...")
+        """Analyze the distribution of opening moves"""
+        print(f"Analyzing opening move distribution, {num_games} games total...")
         
         opening_moves = {'X': [], 'O': []}
         
         for game_num in range(num_games):
             self.game = ConnectFour()
             
-            # 记录AI的开局移动
+            # Record AI's opening move
             if self.game.current_player == 'X':
                 col = self.game.best_move(ai_depth)
                 opening_moves['X'].append(col)
             else:
-                # 随机对手的开局移动
+                # Random opponent's opening move
                 col = random.choice(self.game.get_valid_moves())
                 opening_moves['O'].append(col)
         
-        # 统计移动分布
+        # Calculate move distribution
         move_distribution = {}
         for player in ['X', 'O']:
             move_distribution[player] = {}
@@ -161,16 +161,16 @@ class Connect4Simulation:
         return move_distribution
     
     def performance_vs_depth(self, depths=[2, 4, 6, 8], games_per_depth=50):
-        """测试不同深度下的性能表现"""
-        print("测试不同搜索深度下的性能表现...")
+        """Test performance at different search depths"""
+        print("Testing performance at different search depths...")
         
         results = {}
         
         for depth in depths:
-            print(f"测试深度 {depth}...")
+            print(f"Testing depth {depth}...")
             start_time = time.time()
             
-            # 进行AI对战随机玩家的测试
+            # Run AI vs random player test
             depth_results = self.simulate_ai_vs_random(games_per_depth, depth)
             depth_results['depth'] = depth
             depth_results['total_time'] = time.time() - start_time
@@ -180,37 +180,37 @@ class Connect4Simulation:
         return results
 
 def main():
-    """主函数，运行各种模拟"""
+    """Main function to run various simulations"""
     simulation = Connect4Simulation()
     
-    print("=== Connect4 游戏模拟分析 ===\n")
+    print("=== Connect4 Game Simulation Analysis ===\n")
     
-    # 1. AI对战随机玩家
-    print("1. AI对战随机玩家分析")
+    # 1. AI vs Random Player
+    print("1. AI vs Random Player Analysis")
     ai_vs_random = simulation.simulate_ai_vs_random(100, 6)
     print()
     
-    # 2. AI对战AI
-    print("2. AI对战AI分析")
+    # 2. AI vs AI
+    print("2. AI vs AI Analysis")
     ai_vs_ai = simulation.simulate_ai_vs_ai(50, 6, 4)
     print()
     
-    # 3. 开局移动分析
-    print("3. 开局移动分布分析")
+    # 3. Opening Move Analysis
+    print("3. Opening Move Distribution Analysis")
     opening_analysis = simulation.analyze_opening_moves(100, 6)
     for player, moves in opening_analysis.items():
-        print(f"{player}玩家开局移动分布:")
+        print(f"{player} player opening move distribution:")
         for col, percentage in moves.items():
-            print(f"  列{col}: {percentage:.1f}%")
+            print(f"  Column {col}: {percentage:.1f}%")
     print()
     
-    # 4. 深度性能分析
-    print("4. 搜索深度性能分析")
+    # 4. Depth Performance Analysis
+    print("4. Search Depth Performance Analysis")
     depth_performance = simulation.performance_vs_depth([2, 4, 6], 30)
     for depth, results in depth_performance.items():
-        print(f"深度{depth}: 胜率{results['ai_win_rate']:.1f}%, 平均时间{results['avg_ai_move_time']:.3f}秒")
+        print(f"Depth {depth}: Win rate {results['ai_win_rate']:.1f}%, Avg time {results['avg_ai_move_time']:.3f}s")
     
-    print("\n=== 模拟完成 ===")
+    print("\n=== Simulation Complete ===")
 
 if __name__ == "__main__":
     main() 

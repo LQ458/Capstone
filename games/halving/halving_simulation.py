@@ -27,7 +27,7 @@ class HalvingSimulation:
         return all_results
     
     def simulate_single_number(self, initial_number, num_games=10):
-        """对单个初始数字进行多次游戏模拟"""
+        """Simulate multiple games for a single initial number"""
         player1_wins = 0
         player2_wins = 0
         game_lengths = []
@@ -65,7 +65,7 @@ class HalvingSimulation:
             move_sequences.append(moves)
             
             if (game_num + 1) % 5 == 0:
-                print(f"  已完成 {game_num + 1}/{num_games} 局游戏")
+                print(f"  Completed {game_num + 1}/{num_games} games")
         
         results = {
             'initial_number': initial_number,
@@ -78,9 +78,9 @@ class HalvingSimulation:
             'move_sequences': move_sequences
         }
         
-        print(f"  玩家1胜率: {results['player1_win_rate']:.1f}%")
-        print(f"  玩家2胜率: {results['player2_win_rate']:.1f}%")
-        print(f"  平均游戏长度: {results['avg_game_length']:.1f}步")
+        print(f"  Player 1 win rate: {results['player1_win_rate']:.1f}%")
+        print(f"  Player 2 win rate: {results['player2_win_rate']:.1f}%")
+        print(f"  Average game length: {results['avg_game_length']:.1f} moves")
         
         return results
     
