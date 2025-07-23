@@ -109,6 +109,13 @@ def find_best_move(game_state, depth=8, use_nim_sum=True):
         math_move = optimal_nim_move(game_state.piles)
         if math_move and math_move in game_state.generate_moves():
             return math_move, 1  # Only 1 node evaluated
+        elif math_move is None:
+            # We're in a losing position - all moves are equally bad
+            # Return a random move since we can't win anyway
+            import random
+            moves = game_state.generate_moves()
+            if moves:
+                return random.choice(moves), 1
     
     # Use minimax with depth limiting
     best_move = None
