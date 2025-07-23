@@ -20,7 +20,7 @@ class NimGame:
         return moves
 
     def evaluate(self):
-        # 游戏结束时，当前玩家获胜（因为他拿走了最后一个石子）
+        # Game ends when current player wins (takes the last stone)
         return 1 if self.is_game_over() else 0
 
     def copy(self):
@@ -38,12 +38,12 @@ def minimax(game_state, depth, is_maximizing_player, alpha=float('-inf'), beta=f
     game_state.visited_nodes += 1
     
     if game_state.is_game_over():
-        # 如果是最大化玩家的回合时游戏结束，说明最小化玩家拿走了最后一个石子
-        # 所以最大化玩家输了（返回-1），最小化玩家赢了（返回1）
+        # If game ends on maximizing player's turn, minimizing player took the last stone
+        # So maximizing player loses (-1), minimizing player wins (1)
         return 1 if not is_maximizing_player else -1
     
     if depth == 0:
-        # 非终端节点，使用Nim-sum评估
+        # Non-terminal node, use Nim-sum evaluation
         nim_sum = 0
         for pile in game_state.piles:
             nim_sum ^= pile
@@ -89,24 +89,24 @@ def find_best_move(game_state, depth=10):
     return best_move, game_state.visited_nodes
 
 
-def bot_vs_bot_game(initial_piles=[3, 4, 5]):
+def agent_vs_agent_game(initial_piles=[3, 4, 5]):
     game = NimGame(initial_piles)
     current_player = 1
     
     while not game.is_game_over():
         game.display()
-        print(f"\nBot Player {current_player}'s turn")
+        print(f"\nAgent Player {current_player}'s turn")
         
         game.visited_nodes = 0
         best_move, nodes_evaluated = find_best_move(game)
         
         if best_move is None:
-            # 如果没有合法移动，当前玩家输
+            # If no legal moves, current player loses
             print("No valid moves left!")
             break
             
         pile_idx, stones = best_move
-        print(f"Bot Player {current_player} takes {stones} stones from pile {pile_idx}")
+        print(f"Agent Player {current_player} takes {stones} stones from pile {pile_idx}")
         print(f"Nodes evaluated: {nodes_evaluated}")
         
         game.make_move(pile_idx, stones)
@@ -114,10 +114,10 @@ def bot_vs_bot_game(initial_piles=[3, 4, 5]):
     
     game.display()
     # Current player is the next player to move, but since game is over, previous player wins
-    print(f"\nBot Player {3 - current_player} wins by taking the last stone!")
+    print(f"\nAgent Player {3 - current_player} wins by taking the last stone!")
 
 
 if __name__ == "__main__":
-    print("Starting Nim Game with two bot players using Minimax algorithm")
+    print("Starting Nim Game with two agent players using Minimax algorithm")
 print("The player who takes the last stone wins!")
-bot_vs_bot_game()
+agent_vs_agent_game()

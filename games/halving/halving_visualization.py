@@ -6,7 +6,7 @@ from halving_simulation import HalvingSimulation
 import json
 import time
 
-# 设置中文字体和样式
+# Set font and style
 plt.rcParams['font.sans-serif'] = ['SimHei', 'Arial Unicode MS', 'DejaVu Sans']
 plt.rcParams['axes.unicode_minus'] = False
 sns.set_style("whitegrid")

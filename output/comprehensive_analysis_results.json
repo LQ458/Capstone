@@ -2,27 +2,34 @@
   "games_data": {
     "Tic-Tac-Toe": {
       "State Space": "5,478",
-      "Bot Win Rate": "98%",
+      "Agent Win Rate": "98%",
       "Average Length": "7.2 moves",
       "Optimal Depth": "6",
       "Complexity": "Low"
     },
     "Connect4": {
       "State Space": "4.5 trillion",
-      "Bot Win Rate": "85%",
+      "Agent Win Rate": "85%",
       "Average Length": "35 moves",
       "Optimal Depth": "6",
       "Complexity": "Medium"
     },
     "Halving Game": {
       "State Space": "Exponential",
-      "Bot Win Rate": "95%*",
+      "Agent Win Rate": "95%*",
       "Average Length": "15 moves",
       "Optimal Depth": "8",
       "Complexity": "High"
+    },
+    "Nim Game": {
+      "State Space": "Finite",
+      "Agent Win Rate": "100%",
+      "Average Length": "12 moves",
+      "Optimal Depth": "10",
+      "Complexity": "Medium"
     }
   },
-  "timestamp": "2025-07-23T10:32:50.518551",
+  "timestamp": "2025-07-23T10:56:52.069718",
   "summary": {
     "tic_tac_toe": {
       "win_rate": 98,

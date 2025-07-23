@@ -1,0 +1,40 @@
+# Build directories
+games/build/
+build/
+
+# Python cache files
+__pycache__/
+*/__pycache__/
+**/__pycache__/
+
+# Connect4 C extension files
+/games/connect4/test.c
+/games/connect4/*.so
+
+# Virtual environment
+venv/
+
+# IDE files
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Python compiled files
+*.pyc
+*.pyo
+*.pyd
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Environment variables
+.env
+.env.local

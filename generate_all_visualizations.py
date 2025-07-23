@@ -5,59 +5,59 @@ import seaborn as sns
 import sys
 import os
 
-# 设置中文字体和样式
+# Set font and style
 plt.rcParams['font.sans-serif'] = ['SimHei', 'Arial Unicode MS', 'DejaVu Sans']
 plt.rcParams['axes.unicode_minus'] = False
 sns.set_style("whitegrid")
 
 def create_comprehensive_comparison():
-    """创建三个游戏的综合对比图表"""
+    """Create comprehensive comparison charts for three games"""
     
-    # 游戏数据
+    # Game data
     games = ['Tic-Tac-Toe', 'Connect4', 'Halving Game']
-    ai_vs_random_rates = [98, 85, 95]  # 示例数据
+    ai_vs_random_rates = [98, 85, 95]  # Example data
     state_space_sizes = ['5,478', '4.5T', 'Exponential']
-    avg_game_lengths = [7.2, 35, 15]  # 示例数据
+    avg_game_lengths = [7.2, 35, 15]  # Example data
     
-    # 创建子图
+    # Create subplots
     fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(16, 12))
     
-    # 1. AI vs Random 胜率对比
+    # 1. AI vs Random win rate comparison
     bars1 = ax1.bar(games, ai_vs_random_rates, color=['#2E8B57', '#4682B4', '#CD853F'], alpha=0.8)
     for bar, rate in zip(bars1, ai_vs_random_rates):
         ax1.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 1, 
                 f'{rate}%', ha='center', va='bottom', fontsize=12, fontweight='bold')
     
-    ax1.set_title('AI对战随机玩家的胜率对比', fontsize=14, fontweight='bold')
-    ax1.set_ylabel('胜率 (%)', fontsize=12)
+    ax1.set_title('AI vs Random Player Win Rate Comparison', fontsize=14, fontweight='bold')
+    ax1.set_ylabel('Win Rate (%)', fontsize=12)
     ax1.set_ylim(0, 105)
     ax1.grid(axis='y', alpha=0.3)
     
-    # 2. 状态空间大小对比
-    ax2.text(0.5, 0.5, '状态空间复杂度', ha='center', va='center', transform=ax2.transAxes, fontsize=14, fontweight='bold')
+    # 2. State space size comparison
+    ax2.text(0.5, 0.5, 'State Space Complexity', ha='center', va='center', transform=ax2.transAxes, fontsize=14, fontweight='bold')
     ax2.text(0.5, 0.4, 'Tic-Tac-Toe: 5,478', ha='center', va='center', transform=ax2.transAxes, fontsize=12)
-    ax2.text(0.5, 0.3, 'Connect4: 4.5万亿', ha='center', va='center', transform=ax2.transAxes, fontsize=12)
-    ax2.text(0.5, 0.2, 'Halving: 指数增长', ha='center', va='center', transform=ax2.transAxes, fontsize=12)
+    ax2.text(0.5, 0.3, 'Connect4: 4.5 trillion', ha='center', va='center', transform=ax2.transAxes, fontsize=12)
+    ax2.text(0.5, 0.2, 'Halving: Exponential growth', ha='center', va='center', transform=ax2.transAxes, fontsize=12)
     ax2.axis('off')
     
-    # 3. 平均游戏长度对比
+    # 3. Average game length comparison
     bars3 = ax3.bar(games, avg_game_lengths, color=['#2E8B57', '#4682B4', '#CD853F'], alpha=0.8)
     for bar, length in zip(bars3, avg_game_lengths):
         ax3.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 0.2, 
                 f'{length}', ha='center', va='bottom', fontsize=12, fontweight='bold')
     
-    ax3.set_title('平均游戏长度对比', fontsize=14, fontweight='bold')
-    ax3.set_ylabel('平均移动次数', fontsize=12)
+    ax3.set_title('Average Game Length Comparison', fontsize=14, fontweight='bold')
+    ax3.set_ylabel('Average Moves', fontsize=12)
     ax3.grid(axis='y', alpha=0.3)
     
-    # 4. 算法复杂度对比
+    # 4. Algorithm complexity comparison
     complexity_data = {
-        'Tic-Tac-Toe': [1, 1, 1],  # 低复杂度
-        'Connect4': [3, 2, 2],     # 中等复杂度
-        'Halving Game': [5, 4, 3]  # 高复杂度
+        'Tic-Tac-Toe': [1, 1, 1],  # Low complexity
+        'Connect4': [3, 2, 2],     # Medium complexity
+        'Halving Game': [5, 4, 3]  # High complexity
     }
     
-    categories = ['计算复杂度', '内存需求', '实现难度']
+    categories = ['Computational', 'Memory', 'Implementation']
     x = np.arange(len(categories))
     width = 0.25
     
@@ -65,8 +65,8 @@ def create_comprehensive_comparison():
     bars4_2 = ax4.bar(x, complexity_data['Connect4'], width, label='Connect4', color='#4682B4', alpha=0.8)
     bars4_3 = ax4.bar(x + width, complexity_data['Halving Game'], width, label='Halving Game', color='#CD853F', alpha=0.8)
     
-    ax4.set_title('算法复杂度对比 (1-5级)', fontsize=14, fontweight='bold')
-    ax4.set_ylabel('复杂度等级', fontsize=12)
+    ax4.set_title('Algorithm Complexity Comparison (1-5 scale)', fontsize=14, fontweight='bold')
+    ax4.set_ylabel('Complexity Level', fontsize=12)
     ax4.set_xticks(x)
     ax4.set_xticklabels(categories)
     ax4.legend()
@@ -77,46 +77,46 @@ def create_comprehensive_comparison():
     plt.show()
 
 def create_algorithm_performance_analysis():
-    """创建算法性能分析图表"""
+    """Create algorithm performance analysis charts"""
     
-    # 搜索深度数据
+    # Search depth data
     depths = [2, 4, 6, 8]
     
-    # 不同游戏的性能数据
+    # Performance data for different games
     ttt_win_rates = [45, 75, 98, 98]  # Tic-Tac-Toe
     c4_win_rates = [35, 55, 85, 92]   # Connect4
     halving_win_rates = [60, 80, 95, 98]  # Halving Game
     
-    ttt_times = [0.001, 0.005, 0.02, 0.05]  # 计算时间
+    ttt_times = [0.001, 0.005, 0.02, 0.05]  # Computation time
     c4_times = [0.01, 0.05, 0.15, 0.45]
     halving_times = [0.001, 0.01, 0.1, 1.0]
     
     fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(16, 12))
     
-    # 1. 胜率随深度的变化
+    # 1. Win rate changes with depth
     ax1.plot(depths, ttt_win_rates, 'o-', label='Tic-Tac-Toe', linewidth=2, markersize=6)
     ax1.plot(depths, c4_win_rates, 's-', label='Connect4', linewidth=2, markersize=6)
     ax1.plot(depths, halving_win_rates, '^-', label='Halving Game', linewidth=2, markersize=6)
     
-    ax1.set_title('搜索深度对胜率的影响', fontsize=14, fontweight='bold')
-    ax1.set_xlabel('搜索深度', fontsize=12)
-    ax1.set_ylabel('胜率 (%)', fontsize=12)
+    ax1.set_title('Search Depth Impact on Win Rate', fontsize=14, fontweight='bold')
+    ax1.set_xlabel('Search Depth', fontsize=12)
+    ax1.set_ylabel('Win Rate (%)', fontsize=12)
     ax1.legend()
     ax1.grid(True, alpha=0.3)
     
-    # 2. 计算时间随深度的变化
+    # 2. Computation time changes with depth
     ax2.plot(depths, ttt_times, 'o-', label='Tic-Tac-Toe', linewidth=2, markersize=6)
     ax2.plot(depths, c4_times, 's-', label='Connect4', linewidth=2, markersize=6)
     ax2.plot(depths, halving_times, '^-', label='Halving Game', linewidth=2, markersize=6)
     
-    ax2.set_title('搜索深度对计算时间的影响', fontsize=14, fontweight='bold')
-    ax2.set_xlabel('搜索深度', fontsize=12)
-    ax2.set_ylabel('计算时间 (秒)', fontsize=12)
+    ax2.set_title('Search Depth Impact on Computation Time', fontsize=14, fontweight='bold')
+    ax2.set_xlabel('Search Depth', fontsize=12)
+    ax2.set_ylabel('Computation Time (seconds)', fontsize=12)
     ax2.set_yscale('log')
     ax2.legend()
     ax2.grid(True, alpha=0.3)
     
-    # 3. 性能效率对比 (胜率/时间)
+    # 3. Performance efficiency comparison (win rate/time)
     ttt_efficiency = [r/t for r, t in zip(ttt_win_rates, ttt_times)]
     c4_efficiency = [r/t for r, t in zip(c4_win_rates, c4_times)]
     halving_efficiency = [r/t for r, t in zip(halving_win_rates, halving_times)]
@@ -125,24 +125,24 @@ def create_algorithm_performance_analysis():
     ax3.plot(depths, c4_efficiency, 's-', label='Connect4', linewidth=2, markersize=6)
     ax3.plot(depths, halving_efficiency, '^-', label='Halving Game', linewidth=2, markersize=6)
     
-    ax3.set_title('算法效率对比 (胜率/计算时间)', fontsize=14, fontweight='bold')
-    ax3.set_xlabel('搜索深度', fontsize=12)
-    ax3.set_ylabel('效率指标', fontsize=12)
+    ax3.set_title('Algorithm Efficiency Comparison (Win Rate/Time)', fontsize=14, fontweight='bold')
+    ax3.set_xlabel('Search Depth', fontsize=12)
+    ax3.set_ylabel('Efficiency Metric', fontsize=12)
     ax3.legend()
     ax3.grid(True, alpha=0.3)
     
-    # 4. 最优深度推荐
-    optimal_depths = [6, 6, 8]  # 每个游戏的最优深度
+    # 4. Optimal depth recommendations
+    optimal_depths = [6, 6, 8]  # Optimal depth for each game
     games = ['Tic-Tac-Toe', 'Connect4', 'Halving Game']
     colors = ['#2E8B57', '#4682B4', '#CD853F']
     
     bars = ax4.bar(games, optimal_depths, color=colors, alpha=0.8)
     for bar, depth in zip(bars, optimal_depths):
         ax4.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 0.1, 
-                f'深度 {depth}', ha='center', va='bottom', fontsize=12, fontweight='bold')
+                f'Depth {depth}', ha='center', va='bottom', fontsize=12, fontweight='bold')
     
-    ax4.set_title('推荐的最优搜索深度', fontsize=14, fontweight='bold')
-    ax4.set_ylabel('搜索深度', fontsize=12)
+    ax4.set_title('Recommended Optimal Search Depth', fontsize=14, fontweight='bold')
+    ax4.set_ylabel('Search Depth', fontsize=12)
     ax4.grid(axis='y', alpha=0.3)
     
     plt.tight_layout()

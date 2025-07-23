@@ -3,12 +3,12 @@ import time
 import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from connect4 import ConnectFour
+from games.connect4.connect4 import ConnectFour
 import test as c4f
 
 class Connect4Simulation:
     """
-    Connect4游戏模拟类，用于进行AI对战和性能分析
+    Connect4 game simulation class for AI battles and performance analysis
     """
     
     def __init__(self):
@@ -16,8 +16,8 @@ class Connect4Simulation:
         self.results = []
         
     def simulate_ai_vs_random(self, num_games=100, ai_depth=6):
-        """AI对战随机玩家的模拟"""
-        print(f"开始AI对战随机玩家模拟，共{num_games}局游戏...")
+        """AI vs random player simulation"""
+        print(f"Starting AI vs random player simulation, {num_games} games total...")
         
         ai_wins = 0
         random_wins = 0
@@ -30,13 +30,13 @@ class Connect4Simulation:
             moves = 0
             
             while True:
-                if self.game.current_player == 'X':  # AI玩家
+                if self.game.current_player == 'X':  # AI player
                     start_time = time.time()
                     col = self.game.best_move(ai_depth)
                     move_time = time.time() - start_time
                     ai_move_times.append(move_time)
                     self.game.make_move(col)
-                else:  # 随机玩家
+                else:  # Random player
                     valid_moves = self.game.get_valid_moves()
                     if valid_moves:
                         col = random.choice(valid_moves)
@@ -60,7 +60,7 @@ class Connect4Simulation:
             total_moves += moves
             
             if (game_num + 1) % 20 == 0:
-                print(f"已完成 {game_num + 1}/{num_games} 局游戏")
+                print(f"Completed {game_num + 1}/{num_games} games")
         
         results = {
             'ai_wins': ai_wins,
@@ -72,15 +72,15 @@ class Connect4Simulation:
             'ai_win_rate': (ai_wins / num_games) * 100
         }
         
-        print(f"AI胜率: {results['ai_win_rate']:.1f}%")
-        print(f"平均每局移动数: {results['avg_moves']:.1f}")
-        print(f"AI平均思考时间: {results['avg_ai_move_time']:.3f}秒")
+        print(f"AI win rate: {results['ai_win_rate']:.1f}%")
+        print(f"Average moves per game: {results['avg_moves']:.1f}")
+        print(f"AI average thinking time: {results['avg_ai_move_time']:.3f} seconds")
         
         return results
     
     def simulate_ai_vs_ai(self, num_games=50, depth1=6, depth2=4):
-        """两个不同深度的AI对战"""
-        print(f"开始AI对战AI模拟，深度{depth1} vs 深度{depth2}，共{num_games}局游戏...")
+        """Two AIs with different depths battle"""
+        print(f"Starting AI vs AI simulation, depth {depth1} vs depth {depth2}, {num_games} games total...")
         
         ai1_wins = 0
         ai2_wins = 0
@@ -92,9 +92,9 @@ class Connect4Simulation:
             moves = 0
             
             while True:
-                if self.game.current_player == 'X':  # AI1 (深度更深)
+                if self.game.current_player == 'X':  # AI1 (deeper depth)
                     col = self.game.best_move(depth1)
-                else:  # AI2 (深度较浅)
+                else:  # AI2 (shallower depth)
                     col = self.game.best_move(depth2)
                 
                 self.game.make_move(col)

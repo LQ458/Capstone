@@ -76,10 +76,10 @@ def main():
                     col = None
             game.make_move(col)
         else:
-            print("bot thinking...")
+            print("agent thinking...")
             t0 = time.time()
             col = game.best_move(depth)
-            print(f"bot plays column {col} ({time.time() - t0:.3f}s)")
+            print(f"agent plays column {col} ({time.time() - t0:.3f}s)")
             game.make_move(col)
 
         game.print_board()

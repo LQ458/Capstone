@@ -50,7 +50,7 @@ class HalvingGame:
             return (best_value, best_move)
     
     def play_game(self):
-        """Simulate two bot players using Minimax algorithm"""
+        """Simulate two agent players using Minimax algorithm"""
         current_number = self.initial_number
         current_player = 1  # Player 1 is the maximizing player
         

@@ -202,9 +202,9 @@ class TicTacToe:
                 print("Invalid input! Please enter numbers between 0 and 2.")
     
     def play_game(self):
-        """Main game loop for human vs bot"""
+        """Main game loop for human vs agent"""
         print("Welcome to Tic Tac Toe!")
-        print("You are X, bot is O")
+        print("You are X, agent is O")
         print("Enter row and column numbers (0-2) to make your move")
         
         while not self.game_over:
@@ -216,11 +216,11 @@ class TicTacToe:
                 self.make_move(row, col)
                 print(f"You placed {BOARD_CHARS[PLAYER_X]} at ({row}, {col})")
             else:
-                # Bot's turn (computer)
-                print("Bot is thinking...")
+                # Agent's turn (computer)
+                print("Agent is thinking...")
                 row, col = self.find_best_move()
                 self.make_move(row, col)
-                print(f"Bot placed {BOARD_CHARS[PLAYER_O]} at ({row}, {col})")
+                print(f"Agent placed {BOARD_CHARS[PLAYER_O]} at ({row}, {col})")
         
         # Game over
         self.print_board()
@@ -231,12 +231,12 @@ class TicTacToe:
             if self.winner == PLAYER_X:
                 print("Congratulations! You win!")
             else:
-                print("Bot wins! Better luck next time!")
+                print("Agent wins! Better luck next time!")
     
-    def play_bot_vs_bot(self):
-        """Bot vs bot simulation for testing"""
-        print("Bot vs bot simulation")
-        print("Both players use the minimax algorithm")
+    def play_agent_vs_agent(self):
+        """Agent vs agent simulation for testing"""
+        print("Agent vs agent simulation")
+        print("Both players use minimax with alpha-beta pruning")
         print(f"{BOARD_CHARS[PLAYER_X]} player goes first\n")
         
         while not self.game_over:
@@ -267,8 +267,8 @@ def main():
     
     # Choose game mode
     print("Choose game mode:")
-    print("1. Human vs bot")
-    print("2. Bot vs bot")
+    print("1. Human vs agent")
+    print("2. Agent vs agent")
     
     while True:
         try:
@@ -277,7 +277,7 @@ def main():
                 game.play_game()
                 break
             elif choice == 2:
-                game.play_bot_vs_bot()
+                game.play_agent_vs_agent()
                 break
             else:
                 print("Please enter 1 or 2.")
