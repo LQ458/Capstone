@@ -14,17 +14,14 @@ BOARD_CHARS = {
 }
 
 class TicTacToe:
-    """
-    Tic Tac Toe game implementation with optimized Minimax AI algorithm
-    """
     
     def __init__(self):
         # Initialize empty 3x3 board using nested lists
         self.board = [[EMPTY for _ in range(3)] for _ in range(3)]
-        self.current_player = PLAYER_X  # X goes first
+        self.current_player = PLAYER_X  # X (Player 1) goes first
         self.game_over = False
         self.winner = None
-        self.move_count = 0  # Track number of moves
+        self.move_count = 0  # Track number of moves (game turns)
         
     def print_board(self):
         """Display the current board state with coordinates"""
@@ -37,11 +34,9 @@ class TicTacToe:
         print()
     
     def is_valid_move(self, row, col):
-        """Check if a move is valid (within bounds and position is empty)"""
         return 0 <= row < 3 and 0 <= col < 3 and self.board[row][col] == EMPTY
     
     def make_move(self, row, col):
-        """Make a move on the board and update game state"""
         if self.game_over or not self.is_valid_move(row, col):
             return False
         
@@ -59,7 +54,7 @@ class TicTacToe:
         return [(i, j) for i in range(3) for j in range(3) if self.board[i][j] == EMPTY]
     
     def check_game_over(self):
-        """Check if the game is over and determine winner"""
+        """Check if the game is over and determine the winner"""
         # Check rows
         for i in range(3):
             if self.board[i][0] == self.board[i][1] == self.board[i][2] != EMPTY:
@@ -85,17 +80,17 @@ class TicTacToe:
             self.winner = self.board[0][2]
             return
         
-        # Check for draw
+        # Check for a draw
         if all(self.board[i][j] != EMPTY for i in range(3) for j in range(3)):
             self.game_over = True
             self.winner = DRAW
     
     def is_first_move(self):
-        """Check if this is the first move of the game"""
+        """Check if this is the first move of the game (move count is 0)"""
         return self.move_count == 0
     
     def evaluate_board(self):
-        """Evaluate the board state for minimax algorithm
+        """Evaluate the board state for minimax algorithm (helper function for utility evaluation)
         Returns: 10 for X win, -10 for O win, 0 for draw or ongoing game
         """
         # Check rows
@@ -120,7 +115,6 @@ class TicTacToe:
     
     def minimax(self, depth, is_maximizing, alpha=float('-inf'), beta=float('inf')):
         """
-        Minimax algorithm with Alpha-Beta pruning and depth consideration
         Args:
             depth: Current depth in the search tree
             is_maximizing: True if current player is maximizing (X), False if minimizing (O)
@@ -167,7 +161,7 @@ class TicTacToe:
             return best
     
     def find_best_move(self):
-        """Find the best move for the current player using minimax algorithm"""
+        """Find the best move for the current player based on the minimax algorithm"""
         # Special case: if it's the first move and center is available, choose center
         if self.is_first_move() and self.board[1][1] == EMPTY:
             return (1, 1)
@@ -193,8 +187,7 @@ class TicTacToe:
         
         return best_move
     
-    def get_human_move(self):
-        """Get move from human player with input validation"""
+    def get_user_move(self):
         while True:
             try:
                 print(f"Your turn ({BOARD_CHARS[self.current_player]}). Enter row and column (0-2):")
@@ -209,25 +202,25 @@ class TicTacToe:
                 print("Invalid input! Please enter numbers between 0 and 2.")
     
     def play_game(self):
-        """Main game loop for human vs AI"""
+        """Main game loop for human vs bot"""
         print("Welcome to Tic Tac Toe!")
-        print("You are X, AI is O")
+        print("You are X, bot is O")
         print("Enter row and column numbers (0-2) to make your move")
         
         while not self.game_over:
             self.print_board()
             
             if self.current_player == PLAYER_X:
-                # Human's turn
-                row, col = self.get_human_move()
+                # User's turn
+                row, col = self.get_user_move()
                 self.make_move(row, col)
                 print(f"You placed {BOARD_CHARS[PLAYER_X]} at ({row}, {col})")
             else:
-                # AI's turn
-                print("AI is thinking...")
+                # Bot's turn (computer)
+                print("Bot is thinking...")
                 row, col = self.find_best_move()
                 self.make_move(row, col)
-                print(f"AI placed {BOARD_CHARS[PLAYER_O]} at ({row}, {col})")
+                print(f"Bot placed {BOARD_CHARS[PLAYER_O]} at ({row}, {col})")
         
         # Game over
         self.print_board()
@@ -238,12 +231,12 @@ class TicTacToe:
             if self.winner == PLAYER_X:
                 print("Congratulations! You win!")
             else:
-                print("AI wins! Better luck next time!")
+                print("Bot wins! Better luck next time!")
     
-    def play_ai_vs_ai(self):
-        """AI vs AI simulation for testing"""
-        print("AI vs AI simulation")
-        print("Both players use Minimax algorithm")
+    def play_bot_vs_bot(self):
+        """Bot vs bot simulation for testing"""
+        print("Bot vs bot simulation")
+        print("Both players use the minimax algorithm")
         print(f"{BOARD_CHARS[PLAYER_X]} player goes first\n")
         
         while not self.game_over:
@@ -274,8 +267,8 @@ def main():
     
     # Choose game mode
     print("Choose game mode:")
-    print("1. Human vs AI")
-    print("2. AI vs AI")
+    print("1. Human vs bot")
+    print("2. Bot vs bot")
     
     while True:
         try:
@@ -284,7 +277,7 @@ def main():
                 game.play_game()
                 break
             elif choice == 2:
-                game.play_ai_vs_ai()
+                game.play_bot_vs_bot()
                 break
             else:
                 print("Please enter 1 or 2.")
