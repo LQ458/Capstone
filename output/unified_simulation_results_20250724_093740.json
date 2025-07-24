@@ -1,0 +1,99 @@
+{
+  "tic_tac_toe": {
+    "agent_vs_random": {
+      "wins": 199,
+      "draws": 1,
+      "losses": 0,
+      "total_moves": 1118,
+      "win_rate": 99.5,
+      "draw_rate": 0.5,
+      "loss_rate": 0.0,
+      "avg_moves": 5.59
+    },
+    "agent_vs_agent": {
+      "wins": 0,
+      "draws": 200,
+      "losses": 0,
+      "total_moves": 1800,
+      "win_rate": 0.0,
+      "draw_rate": 100.0,
+      "loss_rate": 0.0,
+      "avg_moves": 9.0
+    },
+    "random_vs_random": {
+      "wins": 115,
+      "draws": 27,
+      "losses": 58,
+      "total_moves": 1534,
+      "win_rate": 57.49999999999999,
+      "draw_rate": 13.5,
+      "loss_rate": 28.999999999999996,
+      "avg_moves": 7.67
+    }
+  },
+  "connect4": null,
+  "nim": {
+    "nim_sum_vs_random": {
+      "wins": 193,
+      "losses": 7,
+      "total_moves": 1061,
+      "nodes_evaluated": 627,
+      "win_rate": 96.5,
+      "avg_moves": 5.305,
+      "avg_nodes": 3.135
+    },
+    "minimax_vs_random": {
+      "wins": 199,
+      "losses": 1,
+      "total_moves": 1105,
+      "nodes_evaluated": 0,
+      "win_rate": 99.5,
+      "avg_moves": 5.525,
+      "avg_nodes": 0.0
+    }
+  },
+  "halving": {
+    "number_10": {
+      "wins": 81,
+      "losses": 19,
+      "total_moves": 481,
+      "win_rate": 81.0,
+      "avg_moves": 4.81
+    },
+    "number_15": {
+      "wins": 100,
+      "losses": 0,
+      "total_moves": 622,
+      "win_rate": 100.0,
+      "avg_moves": 6.22
+    },
+    "number_20": {
+      "wins": 100,
+      "losses": 0,
+      "total_moves": 500,
+      "win_rate": 100.0,
+      "avg_moves": 5.0
+    },
+    "number_25": {
+      "wins": 100,
+      "losses": 0,
+      "total_moves": 740,
+      "win_rate": 100.0,
+      "avg_moves": 7.4
+    },
+    "number_30": {
+      "wins": 90,
+      "losses": 10,
+      "total_moves": 762,
+      "win_rate": 90.0,
+      "avg_moves": 7.62
+    },
+    "number_50": {
+      "wins": 99,
+      "losses": 1,
+      "total_moves": 987,
+      "win_rate": 99.0,
+      "avg_moves": 9.87
+    }
+  }
+}

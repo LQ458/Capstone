@@ -206,7 +206,7 @@ class TicTacToe:
                 print("Agent is thinking...")
                 row, col = self.find_best_move()
                 self.make_move(row, col)
-                print(f"Agent placed {BOARD_CHARS[PLAYER_O]} at ({row}, {col})")
+                print(f"Agent placed {BOARD[PLAYER_O]} at ({row}, {col})")
         
         # Game over
         self.print_board()
@@ -223,7 +223,7 @@ class TicTacToe:
         """Agent vs agent simulation for testing"""
         print("Agent vs agent simulation")
         print("Both players use minimax with alpha-beta pruning")
-        print(f"{BOARD_CHARS[PLAYER_X]} player goes first\n")
+        print(f"{BOARD[PLAYER_X]} player goes first\n")
         
         while not self.game_over:
             self.print_board()

@@ -21,7 +21,7 @@ class HalvingGame:
             best_value = float('-inf')
             best_move = None
             for move in self.get_moves(current_number):
-                value, tmp = self.minimax(move, False, depth+1, alpha, beta)
+                value, _ = self.minimax(move, False, depth+1, alpha, beta)
                 if value > best_value:
                     best_value = value
                     best_move = move
@@ -33,7 +33,7 @@ class HalvingGame:
             best_value = float('inf')
             best_move = None
             for move in self.get_moves(current_number):
-                value, tmp = self.minimax(move, True, depth+1, alpha, beta)
+                value, _ = self.minimax(move, True, depth+1, alpha, beta)
                 if value < best_value:
                     best_value = value
                     best_move = move
@@ -50,7 +50,7 @@ class HalvingGame:
 
         while current_number>1:
             is_maximizing = (current_player == 1)
-            tmp, move = self.minimax(current_number, is_maximizing)
+            _, move = self.minimax(current_number, is_maximizing)
             
             operation = "-1" if move == current_number - 1 else "/2"
             print(f"Player {current_player} changes {current_number}{operation} => {move}")
@@ -62,6 +62,7 @@ class HalvingGame:
         winner = 2 if current_player == 1 else 1
         print(f"Game over! Player {winner} wins!")
 
-initial_number = int(input("Please input an initial number greater than 1: "))
-game = HalvingGame(initial_number)
-game.play_game()
+if __name__ == "__main__":
+    initial_number = int(input("Please input an initial number greater than 1: "))
+    game = HalvingGame(initial_number)
+    game.play_game()
