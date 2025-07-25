@@ -1,10 +1,7 @@
 #!/usr/bin/env python3
 """
-Comprehensive Game Analysis: Combined Simulation and Radar Plot Visualization
-This script runs simulations for Tic-Tac-Toe, Nim, and Halving games,
-then generates professional radar plot visualizations for academic analysis.
-
-Connect4 simulation removed - uses default data to maintain identical results.
+This is a visualization of the performance of the agents for Tic-Tac-Toe, Nim, and Halving games,
+then generates radar plot visualizations for academic analysis.
 """
 
 import sys
@@ -23,19 +20,15 @@ from datetime import datetime
 from math import pi
 from glob import glob
 
-# Add the games directory to the Python path
 sys.path.append('games')
 
-# Import game classes (Connect4 removed)
 from tic_tac_toe import TicTacToe
 import nim
 from Halving import HalvingGame
 
-# Set academic style and fix Chinese font issues
 plt.style.use('seaborn-v0_8-whitegrid')
 sns.set_palette("husl")
 
-# Configure font settings to handle Chinese characters properly
 plt.rcParams['font.sans-serif'] = ['Arial Unicode MS', 'DejaVu Sans', 'Liberation Sans', 'Arial']
 plt.rcParams['axes.unicode_minus'] = False
 plt.rcParams['font.size'] = 12
@@ -56,10 +49,10 @@ def run_tic_tac_toe_simulations(num_games=200):
         moves = 0
         
         while not game.game_over:
-            if game.player == 1:  # X - Agent
+            if game.player == 1:  # X
                 row, col = game.find_best_move()
                 game.make_move(row, col)
-            else:  # O - Random
+            else:  # O
                 moves_available = game.get_available_moves()
                 if moves_available:
                     row, col = random.choice(moves_available)
@@ -85,11 +78,11 @@ def run_tic_tac_toe_simulations(num_games=200):
             moves += 1
         
         results['agent_vs_agent']['total_moves'] += moves
-        if game.winner == 1:  # X wins
+        if game.winner == 1:
             results['agent_vs_agent']['wins'] += 1
-        elif game.winner == 2:  # O wins
+        elif game.winner == 2:
             results['agent_vs_agent']['losses'] += 1
-        else:  # Draw
+        else:
             results['agent_vs_agent']['draws'] += 1
     
     # Random vs Random
@@ -105,11 +98,11 @@ def run_tic_tac_toe_simulations(num_games=200):
             moves += 1
         
         results['random_vs_random']['total_moves'] += moves
-        if game.winner == 1:  # X wins
+        if game.winner == 1:
             results['random_vs_random']['wins'] += 1
-        elif game.winner == 2:  # O wins
+        elif game.winner == 2:
             results['random_vs_random']['losses'] += 1
-        else:  # Draw
+        else:
             results['random_vs_random']['draws'] += 1
     
     # Calculate statistics
@@ -202,7 +195,6 @@ def run_nim_simulations(num_games=200):
                 current_player = 3 - current_player
             moves += 1
             
-            # Prevent infinite loops
             if moves > 100:
                 break
         
@@ -237,7 +229,6 @@ def run_nim_simulations(num_games=200):
                 current_player = 3 - current_player
             moves += 1
             
-            # Prevent infinite loops
             if moves > 100:
                 break
         
@@ -289,33 +280,31 @@ def run_halving_simulations(num_games=100):
         for i in range(num_games):
             game = HalvingGame(num)
             current_number = num
-            current_player = 1  # 1 for agent, 2 for random
+            current_player = 1
             moves = 0
             
             while current_number > 1:
-                if current_player == 1:  # Agent
+                if current_player == 1:
                     _, best_move = game.minimax(current_number, True)
                     if best_move is not None:
                         current_number = best_move
                     else:
                         break
-                else:  # Random
+                else:
                     available_moves = game.get_moves(current_number)
                     if available_moves:
                         current_number = random.choice(available_moves)
                     else:
                         break
                 
-                current_player = 3 - current_player  # Switch players
+                current_player = 3 - current_player
                 moves += 1
                 
-                # Prevent infinite loops
                 if moves > 50:
                     break
             
             results[f'number_{num}']['total_moves'] += moves
             
-            # Winner is the last player to move (whoever reduces it to 1)
             winner = 3 - current_player
             if winner == 1:
                 results[f'number_{num}']['wins'] += 1
@@ -332,27 +321,24 @@ def run_halving_simulations(num_games=100):
     return results
 
 def collect_simulation_data():
-    """Collect all simulation data and save to JSON (maintains exact format for radar plots)"""
+    """Collect all simulation data and save to JSON"""
     print("=== Comprehensive Game Analysis ===")
     print("Running simulations for Tic-Tac-Toe, Nim, and Halving games...")
     
-    # Run simulations
     tic_tac_toe_data = run_tic_tac_toe_simulations(200)
     nim_data = run_nim_simulations(200)
     halving_data = run_halving_simulations(100)
     
-    # Use default Connect4 data (simulation removed but data maintained for identical radar plots)
     connect4_data = None  # This triggers the default fallback in radar plot code
     
     # Combine all data with exact structure expected by radar plots
     combined_data = {
         'tic_tac_toe': tic_tac_toe_data,
-        'connect4': connect4_data,  # null triggers default values in radar plot
+        'connect4': connect4_data,
         'nim': nim_data,
         'halving': halving_data
     }
     
-    # Save to JSON with timestamp
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     filename = f'output/unified_simulation_results_{timestamp}.json'
     
@@ -364,11 +350,9 @@ def collect_simulation_data():
     return combined_data, filename
 
 # === RADAR PLOT GENERATION FUNCTIONS ===
-# (Copied from generate_radar_plot.py to maintain identical results)
 
 def load_latest_simulation_data():
-    """Load the most recent comprehensive simulation data"""
-    # Find the latest simulation results file
+    """Find the latest simulation results file"""
     result_files = glob('output/unified_simulation_results_*.json')
     if not result_files:
         result_files = glob('output/comprehensive_simulation_results_*.json')
@@ -376,7 +360,6 @@ def load_latest_simulation_data():
     if not result_files:
         raise FileNotFoundError("No simulation data files found. Please run simulations first.")
     
-    # Get the most recent file
     latest_file = max(result_files)
     print(f"Loading simulation data from: {latest_file}")
     
@@ -406,7 +389,7 @@ def calculate_game_metrics(data):
             'theoretical_optimality': 95     # Near optimal play
         }
     
-    # Connect4 metrics (uses default data since simulation removed)
+    # Connect4 metrics
     connect4_data = data.get('connect4')
     if connect4_data and connect4_data is not None:
         # Use depth 8 data if available
@@ -431,7 +414,7 @@ def calculate_game_metrics(data):
                 'theoretical_optimality': 88
             }
     else:
-        # Default Connect4 values (identical to original radar plot code)
+        # Default Connect4 values
         metrics['Connect4'] = {
             'win_rate': 100,
             'avg_game_length': 11,
@@ -496,26 +479,22 @@ def calculate_game_metrics(data):
 def create_radar_plot(metrics):
     """Create comprehensive radar plot comparing all games"""
     
-    # Define the metrics to display
     metric_labels = [
         'Win Rate\n(%)',
-        'Game\nEfficiency',  # Inverse of game length, normalized
+        'Game\nEfficiency',
         'Computational\nEfficiency',
         'Strategic\nConsistency', 
         'Algorithm\nEffectiveness',
         'Theoretical\nOptimality'
     ]
     
-    # Calculate normalized metrics for radar plot
     games = list(metrics.keys())
     colors = ['#3498db', '#e74c3c', '#2ecc71', '#f39c12']
     
-    # Extract raw values for normalization
     all_game_lengths = [metrics[game]['avg_game_length'] for game in games]
     max_length = max(all_game_lengths)
     min_length = min(all_game_lengths)
     
-    # Prepare data for each game
     radar_data = {}
     for i, game in enumerate(games):
         game_metrics = metrics[game]
@@ -533,7 +512,6 @@ def create_radar_plot(metrics):
             game_metrics['theoretical_optimality']       # Theoretical Optimality
         ]
     
-    # Number of metrics
     N = len(metric_labels)
     
     # Create figure with two subplots - better centering
@@ -541,7 +519,7 @@ def create_radar_plot(metrics):
     
     # First subplot: All games overlaid
     angles = [n / float(N) * 2 * pi for n in range(N)]
-    angles += angles[:1]  # Complete the circle
+    angles += angles[:1]
     
     ax1.set_theta_offset(pi / 2)
     ax1.set_theta_direction(-1)
@@ -549,7 +527,7 @@ def create_radar_plot(metrics):
     # Plot each game
     for i, game in enumerate(games):
         values = radar_data[game]
-        values += values[:1]  # Complete the circle
+        values += values[:1]
         
         ax1.plot(angles, values, 'o-', linewidth=4, label=game, 
                 color=colors[i], markersize=10)
@@ -567,11 +545,10 @@ def create_radar_plot(metrics):
     ax1.legend(loc='upper right', bbox_to_anchor=(1.45, 1.2), fontsize=22)
     
     # Second subplot: Individual game details with metrics table
-    ax2.remove()  # Remove the polar projection
-    ax2 = fig.add_subplot(1, 2, 2)  # Add regular subplot
+    ax2.remove()
+    ax2 = fig.add_subplot(1, 2, 2)
     ax2.axis('off')
     
-    # Create detailed metrics table
     table_data = [['Game', 'Win Rate (%)', 'Avg Moves', 'Computational\nEfficiency', 'Overall Score']]
     
     for game in games:
@@ -585,26 +562,22 @@ def create_radar_plot(metrics):
             f"{overall_score:.1f}/100"
         ])
     
-    # Create and style the table
     table = ax2.table(cellText=table_data[1:], colLabels=table_data[0],
                      cellLoc='center', loc='center', bbox=[0, 0.4, 1, 0.5])
     table.auto_set_font_size(False)
     table.set_fontsize(18)
     table.scale(1, 3.5)
     
-    # Style the header
     for i in range(len(table_data[0])):
         table[(0, i)].set_facecolor('#34495e')
         table[(0, i)].set_text_props(weight='bold', color='white')
     
-    # Style the rows with game colors
     for i in range(1, len(table_data)):
         for j in range(len(table_data[0])):
             table[(i, j)].set_facecolor(colors[i-1] if j == 0 else 'white')
             if j == 0:
                 table[(i, j)].set_text_props(weight='bold', color='white')
     
-    # Add metric explanations
     explanations = [
         "Metric Explanations:",
         "• Win Rate: Success against random players",
@@ -620,7 +593,6 @@ def create_radar_plot(metrics):
              verticalalignment='top', bbox=dict(boxstyle="round,pad=0.8", 
                                                facecolor="lightblue", alpha=0.3))
     
-    # Add performance insights
     insights = [
         "Key Insights:",
         f"• Nim achieves perfect mathematical optimality",
@@ -636,7 +608,6 @@ def create_radar_plot(metrics):
     
     ax2.set_title('Performance Metrics and Analysis', fontsize=24, fontweight='bold')
     
-    # Better centering for comprehensive plot
     plt.tight_layout()
     plt.subplots_adjust(left=0.05, right=0.95, top=0.9, bottom=0.1, wspace=0.3)
     plt.savefig('output/images/comprehensive_radar_analysis.png', dpi=300, bbox_inches='tight')
@@ -669,7 +640,6 @@ def create_individual_game_radars(metrics):
         ax.set_theta_offset(pi / 2)
         ax.set_theta_direction(-1)
         
-        # Calculate values (same as before)
         game_data = metrics[game]
         all_lengths = [metrics[g]['avg_game_length'] for g in games]
         max_length, min_length = max(all_lengths), min(all_lengths)
@@ -685,11 +655,9 @@ def create_individual_game_radars(metrics):
         ]
         values += values[:1]
         
-        # Plot
         ax.plot(angles, values, 'o-', linewidth=5, color=colors[i], markersize=12)
         ax.fill(angles, values, alpha=0.4, color=colors[i])
         
-        # Customize
         ax.set_xticks(angles[:-1])
         ax.set_xticklabels(metric_labels, fontsize=18, fontweight='bold')
         ax.set_ylim(0, 100)
@@ -699,7 +667,6 @@ def create_individual_game_radars(metrics):
         ax.set_title(f'{game}\nOverall Score: {np.mean(values[:-1]):.1f}/100', 
                     fontsize=22, fontweight='bold', pad=40)
         
-        # Add value annotations
         for angle, value, label in zip(angles[:-1], values[:-1], metric_labels):
             ax.annotate(f'{value:.0f}', xy=(angle, value), xytext=(angle, value + 8),
                        ha='center', va='center', fontsize=14, fontweight='bold',
@@ -715,7 +682,6 @@ def create_individual_game_radars(metrics):
 def create_overlay_radar(metrics):
     """Create a single large overlay radar plot with all four games"""
     
-    # Define the metrics to display with better spacing
     metric_labels = [
         'Win Rate\n(%)',
         'Game\nEfficiency',
@@ -735,7 +701,6 @@ def create_overlay_radar(metrics):
     max_length = max(all_game_lengths)
     min_length = min(all_game_lengths)
     
-    # Prepare data for each game
     radar_data = {}
     for i, game in enumerate(games):
         game_metrics = metrics[game]
@@ -753,10 +718,8 @@ def create_overlay_radar(metrics):
             game_metrics['theoretical_optimality']       # Theoretical Optimality
         ]
     
-    # Number of metrics
     N = len(metric_labels)
     
-    # Create large figure with single radar plot, centered
     fig, ax = plt.subplots(figsize=(24, 24), subplot_kw=dict(projection='polar'))
     
     # Set up angles
@@ -769,7 +732,7 @@ def create_overlay_radar(metrics):
     # Plot each game with different line styles for better distinction
     for i, game in enumerate(games):
         values = radar_data[game]
-        values += values[:1]  # Complete the circle
+        values += values[:1]
         
         ax.plot(angles, values, marker='o', linewidth=8, label=game, 
                 color=colors[i], markersize=16, linestyle=line_styles[i])
@@ -777,43 +740,36 @@ def create_overlay_radar(metrics):
     
     # Add value annotations for ALL points on ALL games
     for j, angle in enumerate(angles[:-1]):
-        # Get all games' values for this metric
         angle_values = [(radar_data[game][j], game, i) for i, game in enumerate(games)]
         
-        # Show annotations for ALL games at each metric
         for rank, (value, game, game_idx) in enumerate(angle_values):
             if value > 10:  # Show almost all values (exclude very low ones)
-                # Create layered positioning to avoid overlaps
-                # Each game gets a different radial position
                 base_radius = value + 8
-                
-                # Arrange games in layers based on their index
-                if rank == 0:  # First game (outermost)
+                if rank == 0:  # First
                     display_radius = base_radius + 12
                     angle_offset = 0
-                elif rank == 1:  # Second game
+                elif rank == 1:  # Second
                     display_radius = base_radius + 6
                     angle_offset = 0.08  # Slight angle offset
-                elif rank == 2:  # Third game
+                elif rank == 2:  # Third
                     display_radius = base_radius + 0
                     angle_offset = -0.08  # Opposite angle offset
-                else:  # Fourth game (innermost)
+                else:  # Fourth
                     display_radius = base_radius - 6
                     angle_offset = 0.04
                 
-                # Special positioning adjustments for crowded areas
-                if j == 2:  # Computational Efficiency position
+                if j == 2:  # Computational Efficiency
                     angle_offset += 0.1
-                elif j == 4:  # Algorithm Effectiveness position
+                elif j == 4:  # Algorithm Effectiveness
                     angle_offset += 0.15
-                elif j == 5:  # Theoretical Optimality position  
+                elif j == 5:  # Theoretical Optimality  
                     angle_offset -= 0.1
                 
                 # Keep within plot bounds
                 display_radius = min(max(display_radius, 15), 140)
                 display_angle = angle + angle_offset
                 
-                # Create color-coded annotations for each game
+                # Color-coded annotations
                 ax.annotate(f'{value:.0f}', 
                            xy=(display_angle, display_radius),
                            ha='center', va='center', fontsize=14, fontweight='bold',
@@ -821,28 +777,23 @@ def create_overlay_radar(metrics):
                            bbox=dict(boxstyle="round,pad=0.4", facecolor='white', 
                                     edgecolor=colors[game_idx], alpha=0.9, linewidth=2))
     
-    # Customize plot
     ax.set_xticks(angles[:-1])
     ax.set_xticklabels(metric_labels, fontsize=26, fontweight='bold')
-    ax.set_ylim(0, 150)  # Increased to accommodate all annotations
+    ax.set_ylim(0, 150)
     ax.set_yticks([20, 40, 60, 80, 100])
     ax.set_yticklabels(['20', '40', '60', '80', '100'], fontsize=22)
     ax.grid(True, alpha=0.4, linewidth=1.5)
     
-    # Enhanced title - Remove Chinese to avoid font issues
     ax.set_title('Game Agent Performance Overlay Comparison\n(All Four Games Combined)', 
                  fontsize=36, fontweight='bold', pad=140)
     
-    # Enhanced legend - better positioning for centered plot
     ax.legend(loc='upper right', bbox_to_anchor=(1.25, 1.1), fontsize=24, 
               frameon=True, fancybox=True, shadow=True)
     
-    # Add concentric circles for better readability
     for radius in [20, 40, 60, 80, 100]:
         circle = plt.Circle((0, 0), radius, fill=False, color='gray', 
                            alpha=0.3, linewidth=1, transform=ax.transData._b)
     
-    # Center the plot better
     plt.tight_layout()
     plt.subplots_adjust(left=0.1, right=0.9, top=0.9, bottom=0.1)
     plt.savefig('output/images/overlay_radar_plot.png', dpi=300, bbox_inches='tight')
@@ -852,22 +803,17 @@ def generate_all_radar_plots(data):
     """Generate all radar plot visualizations (maintains identical results)"""
     print("Generating radar plot visualizations...")
     
-    # Create output directory
     os.makedirs('output/images', exist_ok=True)
     
-    # Calculate metrics
     print("  → Calculating normalized metrics...")
     metrics = calculate_game_metrics(data)
     
-    # Generate comprehensive radar plot
     print("  → Creating comprehensive radar plot...")
     create_radar_plot(metrics)
     
-    # Generate individual game radars
     print("  → Creating individual game radar plots...")
     create_individual_game_radars(metrics)
     
-    # Generate overlay radar plot
     print("  → Creating overlay radar plot...")
     create_overlay_radar(metrics)
     
@@ -893,7 +839,7 @@ def main():
     print()
     
     try:
-        # Step 1: Run simulations and collect data
+        #Run simulations and collect data
         simulation_data, json_filename = collect_simulation_data()
         
         print(f"\nSimulation Summary:")
@@ -904,7 +850,7 @@ def main():
         print(f"  Connect4: Using default data (simulation removed)")
         print()
         
-        # Step 2: Generate radar plot visualizations
+        #Generate radar plot visualizations
         generate_all_radar_plots(simulation_data)
         
         print(f"\n=== Analysis Complete ===")
