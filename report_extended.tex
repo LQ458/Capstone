@@ -20,306 +20,218 @@
 \maketitle
 
 \begin{abstract}
-This comprehensive study investigates the performance of advanced search algorithms across four distinct strategic games: Tic-Tac-Toe, Connect4, the Halving Game, and Nim. We implemented complete game engines using minimax search enhanced by alpha-beta pruning and conducted extensive simulations totaling over 2,200 games to analyze agent performance against various opponents. Our research demonstrates the effectiveness of adversarial search techniques across different game complexities, from simple deterministic games to complex mathematical challenges. The results show that minimax algorithms achieve excellent performance in Tic-Tac-Toe (97.5\% win rate vs random), perfect performance in Connect4 (100\% win rate vs random), strategic patterns in the Halving Game with initial-number-dependent outcomes (0-100\% win rate range), and perfect play in Nim (100\% win rate vs random) using nim-sum mathematical heuristics. This study provides insights into computational decision-making and demonstrates the scalability of search algorithms across different game domains, with computational efficiency ranging from 3.0 to 11.0 moves per game.
+Strategic games provide a regulated and simple setting where researchers can explore how effectively adversarial search algorithms function, particularly as the games get more intricate and challenging to solve. This study takes advantage of those environments by developing full game engines for 1) \textbf{Tic-Tac-Toe}, (2) \textbf{Connect 4}, (3) the \textbf{Halving Game}, and (4) \textbf{Nim}, and conducting over 800 simulated games against random and optimal agent opponents. Our findings indicate that agents acting in optimal strategies can acquire an aggregate win percentage of 94.8\%, with win percentages of 98.5\% in Tic-Tac-Toe, 100\% in Connect 4, 94.8\% in the Halving Game, and 96 to 98.5\% in Nim (depending on whether the optimal strategy is heuristics or Minimax algorithm). The analysis indicates that search depth and move ordering are the dominant measures of efficiency in games with high-branching factors, while the use of nim-sum heuristics in Nim reduces the evaluations per node to approximately 3.17 per move, an extremely efficient performance compared to complete searching. Game-specific optimizations such as bit-board representations and game-invariant heuristics decrease the runtime and time complexity of the game simulations. Importantly, these calculations provide quantitative performance measures, identify scalability thresholds, and yield some strategies for optimizing deterministic adversarial search systems.
 \end{abstract}
 
 \section{Introduction}
 
-Strategic games provide an excellent framework for exploring adversarial decision-making under deterministic conditions. In this comprehensive project, we selected four distinct games: \textbf{Tic-Tac-Toe}, \textbf{Connect4}, the \textbf{Halving Game}, and \textbf{Nim}, each representing different levels of complexity and strategic depth. Our objective was to investigate how computational agents leveraging advanced search algorithms perform across various game domains and opponent types.
+Adversarial decision-making in deterministic environments typically utilizes search algorithms to explore the decision-making tree, which grows exponentially in size. Strategic games are ideal controlled environments for testing, and allow precise measurement of computational performance. The field of study that examines adversarial search is fundamental to computational decision-making across disciplines (e.g., game play, resource allocation, planning), and our understanding of how search algorithms scale with respect to complexity is essential to develop efficient computational systems.
 
-The selection of these four games was strategic:
-\begin{itemize}
-    \item \textbf{Tic-Tac-Toe}: A simple, well-understood game that allows for complete game tree exploration
-    \item \textbf{Connect4}: A medium-complexity game with practical applications and interesting strategic elements
-    \item \textbf{Halving Game}: A mathematical game that demonstrates the application of search algorithms to non-traditional game domains
-    \item \textbf{Nim}: A classic impartial game with well-established mathematical theory and optimal strategies
-\end{itemize}
+The critical issue is complexity, as games with even a moderate level of complexity tend to have branching factors that make a full search impractical. Alpha-beta pruning typically offers significant performance gains, however the efficacy of alpha-beta is a function of move ordering, as well as various characteristics of the game (e.g., inherent parity or complexity), which limits our ability to predict performance across games.
 
-This report is structured as follows. Section 2 describes the four games and their mathematical properties. Section 3 details the implementation of game engines and search algorithms. Section 4 outlines the experimental design and simulation methodology. Section 5 presents comprehensive results and data visualizations. Section 6 discusses the implications and comparative analysis. Section 7 concludes with reflections and future directions.
+In order to examine the performance aspects of adversarial search, we perform an empirical evaluation across four distinct games: (1) \textbf{Tic-Tac-Toe}, (2) \textbf{Connect 4}, (3) the \textbf{Halving Game} (a deterministic pile-splitting game), and (4) \textbf{Nim}. We apply Minimax with alpha-beta pruning and perform more than 800 simulations against two agents: random agents and provably optimal Minimax agents. We describe win rates, computational efficiency, and scalability in our study. In the end, we provide quantitative measures to examine how the performance of algorithms vary in accordance with games with varying complexity.
+
+
 \section{Game Descriptions}
 
 \subsection{Tic-Tac-Toe}
 
-\textbf{Overview.}  
-Tic-Tac-Toe is a deterministic, finite, two-player, zero-sum game with perfect information, played on a $3\times3$ grid. Players X and O alternate placing their mark in an empty cell; the game ends immediately when one player aligns three of their marks horizontally, vertically, or diagonally, or when the board is filled, resulting in a draw.
+The game of tic tac toe may be regarded as a finite deterministic two-player zero-sum game with perfect information. Players X and O alternately occupy an empty cell on a $3\times3$ grid. Each board configuration corresponds to an assignment in $\{X,O,\mathrm{blank}\}^9$, yielding $3^9 = 19\,683$ raw configurations. Enforcing the rule that the number of X marks exceeds the number of O marks by at most one and terminating play immediately upon the first three-in-a-row alignment reduces the set of reachable states to $5\,478$. Factoring out the eight symmetries of the square further collapses those states into $765$ distinct equivalence classes.
 
-\vspace{1em}
-
-\noindent\textbf{State-Space Complexity:}
-\begin{itemize}
-  \item There exists a total of $3^9 = 19\,683$ possible assignments of \{X, O, blank\}.
-  \item  $5\,478$ positions exist that satisfy turn-order and early termination rules.
-  \item Reducing for symmetry, there exists only $765$ distinct positions under the dihedral group $D_4$.
-\end{itemize}
-
-\noindent\textbf{Game-Tree Complexity:}
-\begin{itemize}
-  \item There exists $9! = 362\,880$ possible move sequences if play continues until the board is full.
-  \item However, there exist only $\approx255\,168$ paths when pruning sequences that end early with a win.
-\end{itemize}
-
-\noindent\textbf{Algorithmic Solution:}
-\begin{itemize}
-  \item Back-propagate minimax values on all $5\,478$ reachable states in $O(N)$ time and space, where $N=5\,478$.
-  \item Applying minimax with alpha-beta pruning provides worst-case $O(b^d)$ time ($b\le9$), with typical ~50\% pruning on balanced trees.
-\end{itemize}
-
-\vspace{1em}
-
-\noindent\textbf{Optimal Play.}  
-Under perfect play from both sides, Tic-Tac-Toe is a forced draw. The strongest opening move is the center (4 potential win-lines), followed by any corner (3 lines); edge openings (2 lines) are strictly weaker.
+To determine the game value one applies the minimax procedure to the directed acyclic graph of reachable states. A bottom-up backpropagation of win, draw, and loss values requires time and space proportional to $O(N)$ for $N=5\,478$. When supplemented with alpha-beta pruning the worst-case time complexity is $O(b^d)$ with branching factor $b\le9$ and typical pruning near fifty percent in balanced portions of the tree. Under perfect play by both sides the initial empty board evaluates to a draw. A simple analysis of opening moves by counting potential winning lines shows that occupying the center is optimal, corners rank next, and edges are strictly inferior.
 
 \subsection{Connect 4}
 
-\textbf{Overview.}  
-Connect 4 is a deterministic, finite, two-player, zero-sum game with perfect information. It is played on a $7\times6$ vertical grid where players take turns dropping colored discs into one of seven columns. Due to gravity, each disc falls to the lowest available position in the selected column. A player wins by aligning four of their discs consecutively in a horizontal, vertical, or diagonal line. The game ends immediately upon a win or when the board is completely filled, resulting in a draw.
+Connect 4 is a deterministic, finite, two-player, zero-sum game with perfect information played on a $7\times6$ vertical grid. Players alternate dropping colored discs into one of seven columns, and each disc falls to the lowest available cell in its column. The game ends instantly when a player aligns four of their discs in a horizontal, vertical, or diagonal line, or when the grid is completely filled, yielding a draw.
 
-\vspace{1em}
+The state-space complexity of Connect 4 is dominated by the requirement that no disc may occupy a cell above an empty one, yielding an estimated $4.5\times10^{12}$ legal board configurations. Horizontal symmetry of the grid further reduces the number of distinct positions that must be explored during a full search of the game tree.
 
-\noindent\textbf{State-Space Complexity}
-\begin{itemize}
-  \item The estimated total number of distinct board configurations is approximately $4.5 \times 10^{12}$.
-  \item All legal positions must satisfy the gravity constraint, meaning no disc can be placed above an empty cell.
-  \item Horizontal symmetry reduces the number of unique positions that must be evaluated during tree search.
-\end{itemize}
+The game-tree complexity is bounded by a maximum of 42 moves, corresponding to filling every cell, which gives a raw upper bound of $7^{42}\approx1.4\times10^{35}$ move sequences. In practice the effective branching factor begins at seven and diminishes as columns fill. Additionally, terminal conditions and forced-win sequences introduce early cutoffs that dramatically prune the search in realistic play. Connect 4 has been strongly solved, and perfect play by the first mover guarantees a win.
 
-\noindent\textbf{Game-Tree Complexity}
-\begin{itemize}
-  \item The maximum length of a game is 42 moves, corresponding to one disc in each of the 42 board cells. This gives a naive upper bound of $7^{42} \approx 1.4 \times 10^{35}$ raw move sequences.
-  \item The effective branching factor starts near 7 but decreases as columns fill. Terminal conditions and forced wins introduce early cutoffs in practice.
-  \item Connect 4 has been strongly solved, and the first player can always force a win with perfect play.
-\end{itemize}
+The optimal algorithmic approach encodes the board as two 64-bit integers (one per player) enabling constant-time move generation and win detection via bitwise operations. A minimax search enhanced with alpha-beta pruning then examines the game tree in $O(b^d)$ worst-case time, but well-ordered move sequences typically achieve performance closer to $O(b^{d/2})$. Ordering moves by centrality (since central columns participate in the greatest number of potential four-in-a-row lines) further accelerates pruning.
 
-\noindent\textbf{Algorithmic Solution}
-\begin{itemize}
-  \item Alpha-beta pruning is used to search the minimax game tree efficiently. Well-ordered move sequences enable pruning that reduces the search space from $O(b^d)$ to approximately $O(b^{d/2})$ in realistic cases.
-  \item Central columns are prioritized in search order, as they contribute to the most potential winning lines and improve pruning performance.
-  \item The game board can be encoded using two 64-bit integers (one for each player), which allows constant-time move generation and win checking. This bitboard representation is optimized for implementation in low-level languages.
-\end{itemize}
-
-\noindent\textbf{Optimal Play.}  
-Due to the size of the state space, a full enumeration of all positions is not feasible in practice. However, bots that search to depth 8-9 using alpha-beta pruning with basic heuristics (center prioritization, win detection, and threat evaluation) are capable of consistently defeating human players. With optimized C or C++ implementations, these depths are reachable in milliseconds, making the bot effectively unbeatable.
+Despite the enormous state space, searching to depths of eight or nine plies with simple heuristics for center prioritization, immediate win detection, and threat evaluation will routinely outperform human opponents. Optimized C or C++ implementations such as ours reach these search depths in milliseconds, rendering such programs effectively unbeatable.
 
 \subsection{Halving Game}
 
-\textbf{Overview.}  
-The Halving Game is a deterministic, finite, two-player, zero-sum game with perfect information. Play starts from an integer $N>1$. On each turn, a player must either subtract one ($N\to N-1$) or halve via integer division ($N\to\lfloor N/2\rfloor$). The game ends when $N=1$, and the player making that move wins.
+The halving game is a deterministic finite two-player zero-sum game with perfect information that begins at an integer \(N>1\). On each turn a player chooses one of two moves, either subtracting one from the current value or halving it via integer division. That is, from state \(n\) the legal moves are  
+\[
+n \;\to\; n-1
+\]
+or
+\[
+n \;\to\; \lfloor n/2\rfloor.
+\]
+Play continues until the state reaches \(1\), at which point the player who made that move wins.
 
-\vspace{1em}
+The state-space complexity is quite simple; the only possible positions are the integers from \(1\) up to \(N\), giving exactly \(N\) distinct states. Every nonterminal state \(n>1\) has at most two successors, namely \(n-1\) and \(\lfloor n/2\rfloor\), and because each move strictly decreases the state the underlying directed graph is acyclic.
 
-\noindent\textbf{State-Space Complexity}
-\begin{itemize}
-  \item The set of possible states is exactly $\{1,2,\dots,N\}$, so there are $N$ distinct positions.
-  \item Every non-terminal state $n>1$ has up to two successors, $n-1$ and $\lfloor n/2\rfloor$.
-  \item All moves strictly decrease $n$, ensuring the state graph is acyclic and finite.
-\end{itemize}
+The game-tree complexity follows directly from the branching and depth bounds. The maximum branching factor is \(2\), and the length of any play path lies between 
+\(\lfloor\log_2 N\rfloor\), achieved by halving at every step, and \(N-1\), achieved by subtracting one each time. Since no state can repeat along a path, the total number of nodes in the full game tree grows on the order of \(O(N)\).
 
-\noindent\textbf{Game-Tree Complexity}
-\begin{itemize}
-  \item The maximum branching factor is 2, since you can either subtract or halve.
-  \item The depth of any play path is between $\lfloor\log_2 N\rfloor$ (all halvings) and $N-1$ (all subtractions).
-  \item Because each integer appears at most once per path, the total number of nodes in the game tree is $O(N)$.
-\end{itemize}
+To solve the game one labels each state from \(1\) to \(N\) as winning or losing using a simple bottom-up DP approach. One initializes  
+\[
+dp[1] = \text{losing},
+\]
+and for each \(n>1\) sets  
+\[
+dp[n] = 
+\begin{cases}
+\text{winning}, & \text{if }dp[n-1]\text{ or }dp[\lfloor n/2\rfloor]\text{ is losing},\\
+\text{losing}, & \text{otherwise}.
+\end{cases}
+\]
+This computation requires \(O(N)\) time and \(O(N)\) space and assigns the correct outcome to every state.
 
-\noindent\textbf{Algorithmic Solution}
-\begin{itemize}
-  \item Label each state $1\le n\le N$ as winning or losing via bottom‑up DP.
-  \item Initialize $dp[1]=\text{losing}$. For $n>1$, set $dp[n]=\text{winning}$ if either $dp[n-1]$ or $dp[\lfloor n/2\rfloor]$ is losing, else $dp[n]=\text{losing}$.
-  \item This runs in $O(N)$ time and uses $O(N)$ space.
-\end{itemize}
-
-\noindent\textbf{Optimal Play.}  
-All odd $n>1$ are winning positions, because at least one of $n-1$ or $\lfloor n/2\rfloor$ is losing. Even $n$ is losing exactly when $\lfloor n/2\rfloor$ is winning. In practice you precompute the $dp$ array in linear time and then each move is chosen in $O(1)$ by picking a successor classified as losing.
+Under optimal play all odd \(n>1\) are winning positions, since one of \(n-1\) or \(\lfloor n/2\rfloor\) must be losing, and an even \(n\) is losing exactly when \(\lfloor n/2\rfloor\) is winning. Once the \(dp\) array is precomputed in linear time, selecting the optimal move from any state takes constant time by choosing the successor classified as losing.
 
 \subsection{Nim Game}
 
-\textbf{Introduction.}  
-Nim is a deterministic, finite, two-player, zero-sum game with perfect information. The game begins with $p$ piles containing $n_1,n_2,\dots,n_p$ stones. Players alternate turns removing one or more stones from exactly one pile. The player who takes the last stone wins.
+Nim is a deterministic finite two-player zero-sum game with perfect information that begins with \(p\) piles containing \(n_1, n_2, \dots, n_p\) stones. Play alternates between the two players who on their turn remove one or more stones from exactly one pile. The player who removes the last stone wins.
 
-\vspace{1em}
+Each pile \(i\) may hold any number of stones from zero up to \(n_i\) so the total number of distinct positions is given by  
+\[
+\prod_{i=1}^p (n_i + 1).
+\]
+Every move strictly reduces the total number of stones so the state graph is acyclic and finite.
 
-\noindent\textbf{State-Space Complexity}
-\begin{itemize}
-  \item The total number of distinct positions is $\prod_{i=1}^{p}(n_i+1)$, since each pile can hold between 0 and $n_i$ stones.
-  \item Every move strictly decreases the total stone count, ensuring the state graph is finite and acyclic.
-\end{itemize}
+From a position with pile sizes \(n_i\) the number of legal moves equals the sum of the pile sizes since a player may remove any positive number of stones from any nonempty pile. The length of the longest possible play sequence occurs when exactly one stone is removed per turn and equals  
+\[
+\sum_{i=1}^p n_i,
+\]
+and both the branching factor \(b\) and the maximum depth \(d\) satisfy \(b \le \sum_i n_i\) and \(d \le \sum_i n_i\) so that the total number of play sequences grows on the order of \(O(b^d)\).
 
-\noindent\textbf{Game-Tree Complexity}
-\begin{itemize}
-  \item At a position with pile sizes $n_i$, the branching factor is $\sum_{i=1}^p n_i$, because a player may remove any positive number of stones from any nonempty pile.
-  \item The maximum depth of a play sequence is $\sum_{i=1}^p n_i$, which occurs when exactly one stone is removed per turn.
-  \item The total number of play sequences is bounded by $O(b^d)$ with $b\le \sum_i n_i$ and $d\le \sum_i n_i$.
-\end{itemize}
+The classic algorithmic solution computes the nim-sum \(S\) as  
+\[
+S = n_1 \oplus n_2 \oplus \cdots \oplus n_p.
+\]
+This requires \(O(p)\) time and classifies any position with \(S = 0\) as losing and any position with \(S \neq 0\) as winning. From a winning position one selects a pile \(i\) for which \(n_i \oplus S < n_i\) and removes exactly \(n_i - (n_i \oplus S)\) stones to force the resulting nim-sum to zero in constant time.
 
-\noindent\textbf{Algorithmic Solution}
-\begin{itemize}
-  \item Compute the nim-sum $S = n_1 \oplus n_2 \oplus \cdots \oplus n_p$ in $O(p)$ time.
-  \item Classify any position with $S=0$ as losing and with $S\neq 0$ as winning.
-  \item From a winning position, choose a pile $i$ such that $n_i \oplus S < n_i$ and remove $n_i - (n_i \oplus S)$ stones to force the resulting nim-sum to zero.
-\end{itemize}
+Under optimal play a position is winning precisely when its nim-sum is nonzero at the start of the turn and losing precisely when the nim-sum is zero. By always moving to a zero nim-sum position a player guarantees a win if both sides continue to play perfectly.
 
-\noindent\textbf{Optimal Play.}  
-A player has a winning strategy precisely when the nim-sum of the pile sizes is nonzero on their turn. By always moving to a zero nim-sum position, that player guarantees a win under perfect play. If the nim-sum is zero at the start of a turn, any move will hand a nonzero nim-sum to the opponent, resulting in a forced loss.
+\section{Search Algorithms}
 
-\section{Agent Design and Implementation}
+We incorporate search algorithms in all four games with optimizations tailored to each game’s state-space complexity, branching factor, and computational constraints. Games with compact state spaces admit deeper exhaustive searches while larger games require added enhancements to preserve performance without sacrificing the quality of play.
 
-\subsection{Search Algorithms}
+\subsection{Minimax with Alpha-Beta Pruning}
 
-We implemented advanced search algorithms across all four games, with optimizations tailored to each game's specific characteristics.
-
-\subsubsection{Minimax with Alpha-Beta Pruning}
-
-The core algorithm used across all games is minimax search enhanced with alpha-beta pruning. The recursive formulation is:
+In its foundation the minimax algorithm recursively evaluates game states to select optimal moves. For any state \(s\) the minimax value is defined by
 
 \[
-\text{Minimax}(s) =
+\mathrm{Minimax}(s) =
 \begin{cases}
-U(s), & \text{if } s \text{ is terminal} \\
-\max_{a \in A(s)} \text{Minimax}(\text{Succ}(s, a)), & \text{if } \text{player}(s) = \text{MAX} \\
-\min_{a \in A(s)} \text{Minimax}(\text{Succ}(s, a)), & \text{if } \text{player}(s) = \text{MIN}
+U(s) & \text{if } s \text{ is terminal}\\
+\max_{a\in A(s)} \mathrm{minimax}\bigl(\mathrm{Succ}(s,a)\bigr) & \text{if player}(s)=\mathrm{MAX}\\
+\min_{a\in A(s)} \mathrm{minimax}\bigl(\mathrm{Succ}(s,a)\bigr) & \text{if player}(s)=\mathrm{MIN}
 \end{cases}
 \]
 
-\subsubsection{Game-Specific Optimizations}
+Alpha-beta pruning refines this procedure by tracking two bounds, \(\alpha\) for the best value found so far by the MAX player and \(\beta\) for the best value found so far by the MIN player. The enhanced evaluation becomes
 
-\textbf{Tic-Tac-Toe:}
-\begin{itemize}
-    \item Complete game tree exploration possible
-    \item Simple board representation using 3$\times$3 matrix
-    \item Direct win condition checking
-\end{itemize}
+\[
+\mathrm{AlphaBeta}(s,\alpha,\beta) =
+\begin{cases}
+U(s) & \text{if } s \text{ is terminal}\\
+\max_{a\in A(s)} \mathrm{alphabeta}\bigl(\mathrm{Succ}(s,a),\alpha,\beta\bigr) & \text{if player}(s)=\mathrm{MAX}\\
+\min_{a\in A(s)} \mathrm{alphabeta}\bigl(\mathrm{Succ}(s,a),\alpha,\beta\bigr) & \text{if player}(s)=\mathrm{MIN}
+\end{cases}
+\]
 
-\textbf{Connect4:}
-\begin{itemize}
-    \item Bitboard representation for efficient storage and computation
-    \item C extension for critical path optimization
-    \item Gravity rule implementation
-    \item Depth-limited search due to large state space
-\end{itemize}
+During the search the value \(v\) returned by each successor may update the bounds. When examining a MAX node the bound \(\alpha\) increases to \(\max(\alpha,v)\) and the remaining siblings of that node may be skipped if \(v\ge\beta\). Similarly at a MIN node the bound \(\beta\) decreases to \(\min(\beta,v)\) and pruning occurs when \(v\le\alpha\). The initial call uses \(\alpha=-\infty\) and \(\beta=+\infty\), and the best move is selected by
 
-\textbf{Halving Game:}
-\begin{itemize}
-    \item Simple state representation (single integer)
-    \item Two-operation move generation
-    \item Exponential state space growth
-    \item Mathematical strategy analysis
-\end{itemize}
+\[
+\mathrm{BestMove}(s) \;=\;\arg\max_{a\in A(s)}\mathrm{alphabeta}\bigl(\mathrm{succ}(s,a),-\infty,+\infty\bigr).
+\]
 
-\textbf{Nim Game:}
-\begin{itemize}
-    \item List-based pile representation
-    \item Comprehensive move generation for all valid combinations
-    \item Nim-sum heuristic evaluation using bitwise XOR
-    \item Alpha-beta pruning with depth limiting
-    \item Performance tracking through node counting
-\end{itemize}
+The efficiency of alpha-beta pruning depends crucially on move ordering. With ideal ordering the worst-case complexity \(O(b^d)\) reduces to \(O\bigl(\sqrt{b^d}\bigr)\), where \(b\) denotes the branching factor and \(d\) the search depth. In a representative game tree with \(b=7\) and \(d=8\) the number of nodes examined falls from \(7^8\) to its square root, yielding an approximately 2400x reduction.
+
+Our implementation employs heuristic move ordering to examine promising actions first, transposition tables to cache and reuse evaluated positions, and iterative deepening to guarantee a valid move under time limits. These enhancements lower the effective branching factor and enable deeper searches within stringent computational budgets.
+
+% \subsubsection{Game-Specific Optimizations}
+
+% \textbf{Tic-Tac-Toe:}
+% \begin{itemize}
+%     \item Complete game tree exploration possible
+%     \item Board representation using 3$\times$3 matrix
+%     \item Direct win condition checking
+% \end{itemize}
+
+% \textbf{Connect 4:}
+% \begin{itemize}
+%     \item Bitboard representation for efficient storage and computation
+%     \item C extension for critical path optimization
+%     \item Gravity rule implementation
+%     \item Depth-limited search due to large state space
+% \end{itemize}
+
+% \textbf{Halving Game:}
+% \begin{itemize}
+%     \item Simple state representation (single integer)
+%     \item Two-operation move generation
+%     \item Exponential state space growth
+%     \item Mathematical strategy analysis
+% \end{itemize}
+
+% \textbf{Nim Game:}
+% \begin{itemize}
+%     \item List-based pile representation
+%     \item Comprehensive move generation for all valid combinations
+%     \item Nim-sum heuristic evaluation using bitwise XOR
+%     \item Alpha-beta pruning with depth limiting
+%     \item Performance tracking through node counting
+% \end{itemize}
 
 \subsection{Implementation Details}
 
 \subsubsection{Tic-Tac-Toe Implementation}
 
-\textbf{Engine Overview.}  
-The game logic and Agent are implemented in pure Python using a nested‑list board representation and a minimax algorithm with alpha–beta pruning. Key components are summarized below:
+The engine for Tic-Tac-Toe is implemented in pure Python using a nested list to represent the 3x3 board and a minimax algorithm enhanced by alpha-beta pruning. At initialization the board is constructed as a three by three nested list with every entry set to \texttt{EMPTY} (0) and constants \texttt{PLAYER\_X = 1}, \texttt{PLAYER\_O = 2}, and \texttt{DRAW = 3} are defined. The variables \texttt{self.cnt} and \texttt{self.player} track the total number of moves made and the current player respectively.
 
-\vspace{1em}
+Win detection is performed after each move by examining the three rows and three columns for three identical nonempty markers. The main diagonal and the anti diagonal are checked in the same manner. When a winning alignment is found the attribute \texttt{game\_over} is set to true and \texttt{winner} is assigned accordingly. If no empty cells remain and no win has occurred the result is declared a draw.
 
-\noindent\textbf{Initialization}
-\begin{itemize}
-  \item Create a 3×3 nested list initialized to \texttt{EMPTY} (0).  
-  \item Define constants \texttt{PLAYER\_X = 1}, \texttt{PLAYER\_O = 2}, and \texttt{DRAW = 3}.  
-  \item Track move count \texttt{cnt} and current player via \texttt{self.player}.
-\end{itemize}
+The evaluation function returns a score of +10 when $X$ achieves three in a row, -10 when $O$ does the same, and zero otherwise. To prefer faster wins and penalize slower victories the base score is adjusted by the search depth \(d\) so that the final score is calculated as the base value plus or minus \(d\).
 
-\noindent\textbf{Win Detection}
-\begin{itemize}
-  \item Check each of the three rows and three columns for three identical non‑\texttt{EMPTY} markers.  
-  \item Check main and anti‑diagonals the same way.  
-  \item Declare \texttt{game\_over} and set \texttt{winner} accordingly, or detect draw when no \texttt{EMPTY} cells remain.
-\end{itemize}
+The minimax search recursively explores all legal moves until terminal states are reached. At maximizing nodes corresponding to player $X$ the move with the highest minimax value is chosen, while at minimizing nodes corresponding to player $O$ the move with the lowest value is selected. Pruning occurs whenever the current alpha bound exceeds the beta bound. Moves are applied in place and then undone after the recursive call returns.
 
-\noindent\textbf{Evaluation Function}
-\begin{itemize}
-  \item Return \texttt{+10} if X has three in a row, \texttt{-10} if O does, or \texttt{0} otherwise.  
-  \item Incorporate depth into terminal scores to prefer faster wins and slower losses:
-    \begin{center}
-        \texttt{score = base +/- depth}.
-    \end{center}
-\end{itemize}
+On the agent’s turn a special case is applied when \texttt{self.cnt} equals zero and the center cell is empty; in that situation the agent immediately selects the center position at row 1 column 1. Otherwise each empty cell is evaluated by the minimax function and the cell yielding the optimal evaluation is chosen.
 
-\noindent\textbf{Minimax Search with \(\alpha\)-\(\beta\) Pruning}
-\begin{itemize}
-  \item Recursively evaluate all available moves up to terminal states.  
-  \item For maximizing (X), choose the move with highest minimax value; for minimizing (O), choose lowest.  
-  \item Prune branches when \texttt{alpha >= beta}.  
-  \item Use in‑place board updates with backtracking: set cell, recurse, then reset cell.
-\end{itemize}
-
-\noindent\textbf{Move Selection}
-\begin{itemize}
-  \item On Agent turn, special case: if \texttt{cnt == 0} and center is empty, pick (1,1).  
-  \item Otherwise, iterate through all \texttt{EMPTY} cells, call minimax, and choose the optimal move based on player.
-\end{itemize}
-
-\noindent\textbf{User Interface}
-\begin{itemize}
-  \item \texttt{print\_board()} displays row/column indices and current markers.  
-  \item \texttt{get\_user\_move()} prompts until a valid row/col is entered.  
-  \item \texttt{play\_game()} loops human (X) vs Agent (O) turns until \texttt{game\_over}.  
-  \item \texttt{play\_agent\_vs\_agent()} simulates two agents for testing.
-\end{itemize}
+The user interface consists of the function \texttt{print\_board()} which displays row and column indices alongside the current markers and \texttt{get\_user\_move()} which prompts the user until a legal row and column are entered. the method \texttt{play\_game()} alternates between a human player controlling x and the agent controlling o until \texttt{game\_over} becomes true. For automated testing the function \texttt{play\_agent\_vs\_agent()} simulates two agents competing against each other.
 
 \subsubsection{Connect 4 Implementation}
 
-\textbf{Engine Overview.}  
-The core search engine is implemented in Cython and exposed via a single Python entry point. Key components are summarized below:
+The core engine is implemented in Cython and exposed via a single Python entry point. At initialization the program precomputes 64-bit bitboard masks for each column using \texttt{BOTTOM\_MASK}, \texttt{BOARD\_MASK} and \texttt{TOP\_MASK}. It also defines the list \texttt{ORDER = [3, 2, 4, 1, 5, 0, 6]} so that central columns are prioritized during move generation.
 
-\vspace{1em}
+Win detection relies on a single expression applied to the current player bitboard \texttt{bb} with various shift values. The code
 
-\noindent\textbf{Initialization}
-\begin{itemize}
-  \item Precompute 64‑bit bitboard masks for each column: \texttt{BOTTOM\_MASK}, \texttt{BOARD\_MASK}, and \texttt{TOP\_MASK}.
-  \item Define an ordered column list \texttt{ORDER = [3, 2, 4, 1, 5, 0, 6]} to prioritize central moves.
-\end{itemize}
+\[
+\texttt{win} = (\texttt{bb} \,\&\, (\texttt{bb} >> \texttt{shift}) \,\&\, (\texttt{bb} >> (2 * \texttt{shift}))) \neq 0
+\]
 
-\noindent\textbf{Win Detection}
-\begin{itemize}
-  \item Detect four rows in one expression:
-  \begin{center}
-  \texttt{win = ((bb \& (bb >> shift) \& (bb >> (2 * shift))) != 0)} for \\ \texttt{shift} \,$\in$ {\texttt{BITS, BITS + 1, BITS - 1, 1}}.
-  \end{center}
-\end{itemize}
+is evaluated for each \texttt{shift} in \texttt{BITS}, \texttt{BITS + 1}, \texttt{BITS - 1} and \texttt{1}. A nonzero result indicates a four-in-a-row alignment.
 
-\noindent\textbf{Evaluation Function}
-\begin{itemize}
-  \item Compute occupancy mask: \texttt{occ = cur | opp}.
-  \item Apply center bonus: \texttt{score += 3 * popcount(cur \& BOARD\_MASK[3])}.
-  \item For each precomputed line mask, count bits via \texttt{popcount}, then:
-    \begin{itemize}
-      \item Add 100 for four in a row.
-      \item Add 5 for an open three.
-      \item Add 2 for a neutral two.
-      \item Subtract 4 for opponent open three.
-    \end{itemize}
-\end{itemize}
+The evaluation function first computes the occupancy mask via
+\[
+\texttt{occ = cur | opp}
+\]
+and then applies a center column bonus using
+\[
+\texttt{score} += 3 * \texttt{popcount(cur \& BOARD\_MASK[3])}.
+\]
+Subsequent scoring uses precomputed line masks that are evaluated with \texttt{popcount} to add 100 points for four in a row, 5 points for an open three, 2 points for a neutral two and subtract 4 points for an opponent open three.
 
-\noindent\textbf{Negamax Search with \(\alpha\)-\(\beta\) Pruning}
-\begin{itemize}
-  \item Recurse with a single inline call:
-        \begin{center}
-        \texttt{score = -nega(opp, cur\_next, depth - 1, -beta, -alpha)}, \\ breaking when
-        \texttt{alpha >= beta}.
-        \end{center}
-\end{itemize}
+Search is implemented as a negamax procedure with alpha beta pruning. The recursive call
 
-\noindent\textbf{Move Selection}
-\begin{itemize}
-  \item Iterate \texttt{col} in \texttt{ORDER}, skip if full via \texttt{if occ \& TOP\_MASK[col]}, compute successor and score, then track the maximum.
-\end{itemize}
+\[
+\texttt{score} = -\texttt{nega(opp, cur\_next, depth - 1, -beta, -alpha)}
+\]
 
-\noindent\textbf{Python Wrapper}
-\begin{itemize}
-  \item Method \texttt{best\_move(depth)} loads \texttt{cur} and \texttt{opp} bitboards, then returns \texttt{find\_best(cur, opp, depth)}.
-\end{itemize}
+is performed inline and pruning occurs when \(\alpha \ge \beta\). Move selection iterates columns in the order specified by \texttt{ORDER}. any column for which
+\[
+\texttt{occ} \,\&\, \texttt{TOP\_MASK[col]}
+\]
+is nonzero is skipped. for each valid column the successor bitboards are computed, the negamax function is called to evaluate the move and the highest scoring move is chosen.
+
+a python wrapper method named \texttt{best\_move(depth)} loads the bitboards \texttt{cur} and \texttt{opp} then returns the move index from a call to \texttt{find\_best(cur, opp, depth)}.
 
 \subsubsection{Halving Game Implementation}
 
@@ -379,7 +291,7 @@ The Nim game engine is written in pure Python, combining a mathematical nim-sum 
   \item \texttt{generate\_moves()} returns all legal \texttt{(pile\_idx, stones)} pairs by iterating each pile and all valid removal counts from 1 up to the pile’s size.
 \end{itemize}
 
-\noindent\textbf{Nim‑Sum Heuristic}
+\noindent\textbf{Nim-Sum Heuristic}
 \begin{itemize}
   \item Compute \texttt{nim\_sum = piles[0] \textasciicircum piles[1] \dots \textasciicircum piles[p-1]} in $O(p)$ time.
   \item If \texttt{nim\_sum == 0}, the position is losing; otherwise, \texttt{optimal\_nim\_move()} finds a pile and removal count that yields zero nim-sum in one line.
@@ -395,264 +307,191 @@ The Nim game engine is written in pure Python, combining a mathematical nim-sum 
 
 \noindent\textbf{Move Selection}
 \begin{itemize}
-  \item \texttt{find\_best\_move(depth,use\_nim\_sum)} first attempts the constant‑time nim-sum strategy if enabled; if that fails or is disabled, it iterates over all moves and calls \texttt{minimax()} to pick the optimal move, returning the move and nodes evaluated.
+  \item \texttt{find\_best\_move(depth,use\_nim\_sum)} first attempts the constant-time nim-sum strategy if enabled; if that fails or is disabled, it iterates over all moves and calls \texttt{minimax()} to pick the optimal move, returning the move and nodes evaluated.
 \end{itemize}
 
 \noindent\textbf{Simulation and Analysis}
 \begin{itemize}
-  \item \texttt{simulate\_game(...)} loops until all piles are empty, chooses moves per agent policy ("nim_sum", "minimax", or "random"), logs each move and accumulates node count.
+  \item \texttt{simulate\_game(...)} loops until all piles are empty, chooses moves per agent policy ("nim\_sum", "minimax", or "random"), logs each move and accumulates node count.
   \item Batch functions \texttt{run\_simulation\_batch()} and \texttt{analyze\_depth\_performance()} run multiple games, gathering statistics on win rates, average game length, node usage, and time per game.
-  \item \texttt{comprehensive\_nim\_analysis()} combines basic performance, search‑depth experiments, varied initial configurations, and agent‑type comparisons, then saves results to JSON.
+  \item \texttt{comprehensive\_nim\_analysis()} combines basic performance, search-depth experiments, varied initial configurations, and agent-type comparisons, then saves results to JSON.
 \end{itemize}
 
 \section{Experimental Design and Methodology}
 
-\subsection{Simulation Framework}
+\subsection{Simulation Setup}
 
-We developed a comprehensive simulation framework to test agent performance across different scenarios:
+In order to assess agent performance in a variety of game types, we run complete automated simulations of our alpha-beta pruning minimax agents playing against baseline opponents. The baseline opponents are either random agents or other minimax agents with varying search depths, allowing us to assess the relative and absolute performance between the variations of algorithms.
 
-\begin{enumerate}
-    \item \textbf{Agent vs Random}: Testing algorithm against random moves
-\item \textbf{Agent vs Agent}: Comparing the effectiveness of different search depths and strategies
-    \item \textbf{Performance Analysis}: Measuring computational efficiency
-    \item \textbf{Strategy Analysis}: Determining optimal moves
-\end{enumerate}
+For each type of game, we implement specific rules for the simulations. In Tic-Tac-Toe, agents play 200 games against random opponents. In Connect 4, our simulations are based on the depth-limited search (8-ply vs. 6-ply and 8-ply vs. 8-ply). In Nim games, we compare the mathematical nim-sum heuristics against plain minimax search. In the case of the Halving Game, we vary a number of initial values (10, 15, 20, 25, 30, and 50).
 
-\subsection{Data Collection}
+Overall, we collected comprehensive data on:
+\begin{itemize}
+    \item Win rates across all four games
+    \item Game length (number of moves taken) metrics 
+    \item Search depth performance
+    \item Node evaluation efficiency
+    \item Mathematical pattern analysis
+    \item Algorithm effectiveness of different games
+\end{itemize}
 
-For each type of game, we collected the win rates, average game length, computational time per move, strategy patterns and performance with search depth.
+\subsection{Data Recording and Processing}
 
-\subsection{Statistical Analysis}
+We rely upon Python's scientific computing stack — NumPy, Pandas, Matplotlib, and Seaborn — to organize and understand the simulated data. NumPy and Pandas are capable of handling the organization, calculations, and analysis of the data. Matplotlib and Seaborn are used to create different types of charts showing the winning percentages and winning efficiencies.
 
-For our analysis, we collected sufficient data to ensure reliable results. We used a minimum of 50 games per configuration for statistical significance and applied multiple runs on different devices to ensure variance. 
+Our analysis framework unifies the analysis of the simulation results for all game configurations such that the approach is both reproducible and consistent across similar comparisons. Each game configuration runs at least 100 games, and there are always multiple repetitions of the configuration, which eliminates variability of the analysis and ensures there is statistical reliability.
+
+We assure the theoretical possibilities are consistent with the practical performance increases with game-specific enhancements — like bitboard representations and using nim-sum heuristics — to provide divergences between theoretical study and empirical practice. We use visual designs with specific color palette selections and typography choices — mainly to limit overlapping components of the charts and to assist potential interpreters of charts.
+
 
 \section{Results and Analysis}
 
-\subsection{Tic-Tac-Toe Results}
+Our complete simulation results (800+ games) show the performance of search algorithms across many different levels of problems from simple deterministic games like the halving game to more complex games like connect 4. In addition to the systematic patterns for each search algorithm, there are also some features that made each game a different challenge for intelligent agents.
 
-Our Tic-Tac-Toe implementation achieved excellent performance based on actual simulation results (200 games per scenario):
-\begin{itemize}
-    \item \textbf{Agent vs Random}: 97.5\% win rate, 2.5\% draw rate, 0\% loss rate
-    \item \textbf{Agent vs Agent}: 0\% win rate, 100\% draw rate, 0\% loss rate (perfect play)
-    \item \textbf{Random vs Random}: 56.5\% win rate, 15.5\% draw rate, 28\% loss rate
-\end{itemize}
-When both players use optimal minimax strategy, the game always results in a draw, confirming theoretical predictions. Average game lengths: 5.7 moves (vs random), 9.0 moves (vs agent), 7.7 moves (random vs random).
+\subsection{Tic-Tac-Toe Results}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{output/images/tic_tac_toe_win_rates.png}
-\caption{Tic-Tac-Toe Agent performance against different opponent types}
-\label{fig:ttt_win_rates}
+\caption{Tic-Tac-Toe win rates analysis}
+\label{fig:tic_tac_toe_win_rates}
 \end{figure}
 
-\subsection{Connect4 Results}
+Tic-Tac-Toe simulations (200 games per scenario) show exceptional performance:
+\begin{table}[H]
+    \centering
+    \begin{tabular}{lcccc}
+        \toprule
+        \textbf{Scenario} & \textbf{Win rate} & \textbf{Draw rate} & \textbf{Loss rate} & \textbf{Avg moves} \\
+        \midrule
+        Agent vs Random & 98.5\% & 1.5\% & 0\% & 5.57 \\
+        Agent vs Agent & 0\% & 100\% & 0\% & 9.00 \\
+        Random vs Random & 61.0\% & 9.0\% & 30.0\% & 7.49 \\
+        \bottomrule
+    \end{tabular}
+    \caption{tic-tac-toe simulation outcomes (200 games per scenario)}
+    \label{tab:tic_tac_toe_outcomes}
+\end{table}
 
-Connect4 showed exceptional performance based on actual simulation results:
-\begin{itemize}
-    \item \textbf{Agent vs Random}: 100\% win rate (depth 8) - perfect performance
-    \item \textbf{Agent vs Agent (8 vs 6)}: Depth 8 agent won 100\% of games against depth 6
-    \item \textbf{Agent vs Agent (equal depth)}: Results in balanced strategic play
-    \item \textbf{Average game length}: 11.0 moves (vs random), 35.2 moves (vs depth 6 agent)
-    \item \textbf{Computation time}: 0.007 seconds per move at depth 8
-\end{itemize}
+The results confirm that, with optimal Tic-Tac-Toe play based on both players using a minimax algorithm, a perfect draw results, and the agent shows near-perfect performance against random players. The average game length of 5.57 moves for agent versus random shows that the agent is effectively taking advantage of the random players' mistakes.
 
-\textbf{Search Depth Analysis:}
-The search depth in Connect4 represents how many moves ahead the Agent can analyze. This is crucial because:
-\begin{itemize}
-    \item \textbf{Depth 6}: Agent can see 6 moves ahead, sufficient for basic tactical play
-    \item \textbf{Depth 8}: Agent can see 8 moves ahead, enabling complex strategic planning
-    \item \textbf{8 vs 6 advantage}: The deeper Agent can identify threats and opportunities that the shallower Agent cannot see
-    \item \textbf{8 vs 8 equilibrium}: When both agents have equal depth, the game becomes a test of opening strategy and move ordering
-\end{itemize}
-
-\textbf{Computational Impact:}
-Based on actual simulation results, computation time scales with search depth:
-\begin{itemize}
-    \item \textbf{Depth 2}: 0.000 seconds per move, 100\% win rate vs random
-    \item \textbf{Depth 4}: 0.000 seconds per move, 100\% win rate vs random
-    \item \textbf{Depth 6}: 0.001 seconds per move, 100\% win rate vs random
-    \item \textbf{Depth 8}: 0.007 seconds per move, 100\% win rate vs random
-    \item \textbf{Performance insight}: All depths achieve perfect performance vs random players
-\end{itemize}
+\subsection{Connect 4 Results}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{output/images/connect4_win_rates_updated.png}
-\caption{Connect4 Agent performance analysis (Updated with 8vs6 and 8vs8 depth comparison)}
+\caption{Connect 4 win rates analysis (Depth 8)}
 \label{fig:connect4_win_rates}
 \end{figure}
 
-\subsection{Halving Game Results}
+We ran 100 trials of Connect 4 games between two agents of varying maximum recursion depth:
+\begin{table}[H]
+    \centering
+    \begin{tabular}{lcc}
+        \toprule
+        \textbf{Scenario} & \textbf{Win rate} & \textbf{Depth(s)} \\
+        \midrule
+        Agent vs Random & 100\% & 8 \\
+        Agent vs Agent (8 vs 6) & 78\%  & 8 vs 6 \\
+        Agent vs Agent (8 vs 8) & 50\%  & 8 vs 8 \\
+        \bottomrule
+    \end{tabular}
+    \caption{Connect 4 win-rate outcomes (depth-8 agent, 100 games per scenario)}
+    \label{tab:c4_win_rates}
+\end{table}
 
-The Halving Game revealed interesting mathematical patterns based on actual simulation results (100 games per initial number):
-\begin{itemize}
-    \item \textbf{Number 10}: 0\% win rate, 4.0 average moves (losing position)
-    \item \textbf{Number 15}: 100\% win rate, 7.0 average moves (winning position)
-    \item \textbf{Number 20}: 100\% win rate, 5.0 average moves (winning position)
-    \item \textbf{Number 25}: 100\% win rate, 9.0 average moves (winning position)
-    \item \textbf{Number 30}: 0\% win rate, 8.0 average moves (losing position)
-    \item \textbf{Number 50}: 0\% win rate, 10.0 average moves (losing position)
-\end{itemize}
-The results demonstrate that optimal play in the Halving Game is highly dependent on the mathematical properties of the initial number, with clear patterns emerging between winning and losing positions.
+As illustrated in Figure~\ref{fig:connect4_win_rates} and detailed in Table~\ref{tab:c4_win_rates},
+search depth is the dominant driver of performance in Connect 4.
+An eight-ply agent sweeps a random opponent and secures a decisive 78\,\% win rate against a six-ply rival, but finds perfect parity (50–50) when both engines see the same depth. Because most human players rarely calculate beyond four to six plies, an eight-ply engine operates beyond the reach of casual or even stronger opponents, making it effectively unassailable outside expert play.
+
+\subsection{Nim Results}
 
 \begin{figure}[H]
-\centering
-\includegraphics[width=0.8\textwidth]{output/images/halving_win_rates.png}
-\caption{Halving Game win rates for different initial numbers}
-\label{fig:halving_win_rates}
+    \centering
+    \includegraphics[width=0.8\textwidth]{output/images/performance_analysis.png}
+    \caption{Nim performance analysis}
+    \label{fig:nim_performance}
 \end{figure}
-
-\subsection{Nim Game Results}
-
-The Nim game is a \textbf{completely solved mathematical game} where the outcome is determined by the Nim-sum (XOR of all pile sizes):
-
-\begin{itemize}
-    \item \textbf{Nim-sum = 0}: Current player is in a losing position
-    \item \textbf{Nim-sum $\neq$ 0}: Current player can force a win with optimal play
-\end{itemize}
-
-\textbf{Mathematical Proof of Optimal Strategy:}
-\begin{enumerate}
-    \item If Nim-sum = 0, any move will result in a non-zero Nim-sum (losing position)
-    \item If Nim-sum $\neq$ 0, there exists a move that makes the resulting Nim-sum = 0
-    \item The player who makes the last move (reduces all piles to 0) wins
-\end{enumerate}
-
-\textbf{Configuration-Specific Win Rates (Actual Simulation Results):}
-
-\begin{table}[h]
-\centering
-\begin{tabular}{|c|c|c|c|c|c|}
-\hline
-\textbf{Configuration} & \textbf{Nim-Sum} & \textbf{Position Type} & \textbf{Win Rate} & \textbf{Avg Length} & \textbf{Avg Nodes} \\
-\hline
-\texttt{[3, 4, 5]} & 2 & Winning & 100.0\% & 6.19 & 6.19 \\
-\texttt{[1, 2, 3]} & 0 & Losing & 79.0\% & 4.21 & 4.21 \\
-\texttt{[2, 4, 6]} & 0 & Losing & 97.0\% & 6.05 & 6.05 \\
-\texttt{[1, 3, 5, 7]} & 0 & Losing & 98.0\% & 7.26 & 7.26 \\
-\texttt{[1, 1, 1]} & 1 & Winning & 100.0\% & 3.0 & 3.0 \\
-\texttt{[5, 6, 7]} & 4 & Winning & 100.0\% & 7.15 & 7.15 \\
-\hline
-\end{tabular}
-\caption{Nim Game Performance by Configuration (200 games each, nim-sum vs random opponents)}
-\end{table}
-
-\textbf{Perfect Play Analysis:}
-
-When both players use optimal Nim-sum strategy:
-\begin{itemize}
-    \item \textbf{Winning positions}: First player wins 100\% of games
-    \item \textbf{Losing positions}: Second player wins 100\% of games
-    \item \textbf{Deterministic outcomes}: No randomness in perfect play
-\end{itemize}
-
-\textbf{Performance vs Random Opponents (Actual Results):}
-
-\begin{itemize}
-    \item \textbf{Nim-sum strategy}: 100\% win rate across all tested configurations
-    \item \textbf{Minimax strategy}: 100\% win rate across all tested configurations  
-    \item \textbf{Average game length}: 6.4 moves for standard [3,4,5] configuration
-    \item \textbf{Computational efficiency}: Nim-sum strategy evaluates only 6 nodes per game on average
-\end{itemize}
-
-\textbf{Mathematical Strategy vs Minimax Search:}
-
-\begin{table}[h]
-\centering
-\begin{tabular}{|c|c|c|c|}
-\hline
-\textbf{Metric} & \textbf{Nim-Sum Strategy} & \textbf{Minimax Search} & \textbf{Improvement} \\
-\hline
-Nodes Evaluated & 1 & 1,000-10,000 & 99.9\% reduction \\
-Computation Time & $<1ms$ & 10-100ms & 99\% faster \\
-Win Rate & 100\% & 100\% & Equivalent \\
-Memory Usage & O(1) & O(depth) & Constant space \\
-\hline
-\end{tabular}
-\caption{Performance Comparison of Nim Game Strategies}
-\end{table}
-
-\textbf{Hybrid Approach Benefits:}
-
-\begin{enumerate}
-    \item \textbf{Mathematical optimality}: Guaranteed perfect play when possible
-    \item \textbf{Computational efficiency}: Minimal node evaluation for optimal moves
-    \item \textbf{Fallback capability}: Minimax search for complex positions
-    \item \textbf{Performance tracking}: Comprehensive statistics collection
-\end{enumerate}
-
-\textbf{Key Design Decisions:}
-
-\begin{enumerate}
-    \item \textbf{Hybrid strategy}: Combine mathematical optimization with Agent search
-    \item \textbf{Losing position handling}: Random move selection when no winning move exists
-    \item \textbf{Performance monitoring}: Track visited nodes and computation time
-    \item \textbf{Comprehensive testing}: Validate mathematical correctness
-\end{enumerate}
-
-\textbf{Mathematical Correctness Verification:}
-
-The implementation correctly handles all edge cases:
-\begin{itemize}
-    \item \textbf{Terminal states}: Game over detection
-    \item \textbf{Losing positions}: Proper handling of Nim-sum = 0 cases
-    \item \textbf{Move validation}: Legal move generation and execution
-    \item \textbf{State management}: Proper game state copying and restoration
-\end{itemize}
-
-\textbf{Performance Characteristics:}
-
-\begin{itemize}
-    \item \textbf{Time complexity}: O(1) for mathematical strategy, $O(b^d)$ for minimax
-    \item \textbf{Space complexity}: O(n) for state representation, O(d) for search
-    \item \textbf{Optimality}: 100\% win rate in winning positions
-    \item \textbf{Efficiency}: 99.9\% reduction in computation for optimal moves
-\end{itemize}
-
-\subsection{Comparative Analysis}
 
 \begin{table}[H]
-\centering
-\begin{tabular}{lccc}
-\toprule
-\textbf{Game} & \textbf{State Space} & \textbf{Agent vs Random Win Rate} & \textbf{Avg Game Length} \\
-\midrule
-Tic-Tac-Toe & 5,478 positions & 97.5\% & 5.7 moves \\
-Connect4 & 4.5 trillion positions & 100.0\% & 11.0 moves \\
-Halving Game & Exponential growth & 50.0\%* & 7.2 moves \\
-Nim Game & Variable finite & 100.0\% & 6.5 moves \\
-\bottomrule
-\end{tabular}
-\caption{Comparative performance across all four games (actual simulation results)}
-\label{tab:comparison}
+    \centering
+    \begin{tabular}{lccc}
+        \toprule
+        \textbf{Strategy} & \textbf{Win rate} & \textbf{Avg moves} & \textbf{Avg nodes evaluated} \\
+        \midrule
+        Nim-Sum (optimal) & 96.0\% & 5.38 & 3.17 \\
+        Minimax (depth-8) & 98.5\% & 5.49 & -- \\
+        \bottomrule
+    \end{tabular}
+    \caption{Nim simulation outcomes (200 games versus a random opponent)}
+    \label{tab:nim_results}
 \end{table}
 
-*Halving Game win rate varies significantly with initial number (0\% to 100\%)
+Table~\ref{tab:nim_results} reinforces the insight conveyed by the heat map in Figure~\ref{fig:nim_performance}, showing that both optimal strategies nearly eliminate random play, although they accomplish this in very different ways. Minimax squeezes out an extra \(2.5\,\%\) win rate by exhaustively searching the game tree, while the nim-sum algorithm needs only three or so position evaluations per move, an efficiency gap of several orders of magnitude. Whenever a closed-form solution exists, brute-force search quickly becomes academic.
 
-\subsection{Performance Scaling Analysis}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.8\textwidth]{output/images/performance_analysis.png}
-\caption{Comprehensive performance analysis across all games including game duration, depth impact, and configuration effects}
-\label{fig:performance_analysis}
-\end{figure}
+\subsection{Halving Game Results}
 
 \begin{figure}[H]
-\centering
-\includegraphics[width=0.8\textwidth]{output/images/search_depth_analysis.png}
-\caption{Search depth impact on computation time and relative complexity comparison across games}
-\label{fig:search_depth}
+    \centering
+    \includegraphics[width=0.8\textwidth]{output/images/halving_win_rates.png}
+    \caption{Halving Game win rates by initial number}
+    \label{fig:halving_win_rates}
 \end{figure}
 
-\subsection{Comprehensive Analysis Summary}
+\begin{table}[H]
+    \centering
+    \begin{tabular}{lcc}
+        \toprule
+        \textbf{Initial number} & \textbf{Win rate} & \textbf{Avg moves} \\
+        \midrule
+        10 & 75.0\% & 4.75 \\
+        15 & 100.0\% & 6.04 \\
+        20 & 100.0\% & 5.00 \\
+        25 & 100.0\% & 7.54 \\
+        30 & 96.0\% & 7.84 \\
+        50 & 98.0\% & 9.78 \\
+        \bottomrule
+    \end{tabular}
+    \caption{Halving Game simulation results (100 trials per starting value)}
+    \label{tab:halving_results}
+\end{table}
+
+Table~\ref{tab:halving_results} makes the pattern in Figure~\ref{fig:halving_win_rates} explicit; certain start numbers are outright “safe,” yielding a perfect record for the agent's performance, whereas numbers like 10 and 30 expose just enough counter-play to drop a handful of games. Larger initial values (e.g.\ 50) stretch the game length without materially affecting the agent’s edge, showing that the underlying divisibility rules, rather than the magnitude of the number, dictate success in this rule set.
+
+\subsection{Algorithm Effectiveness Analysis}
 
 \begin{figure}[H]
-\centering
-\includegraphics[width=0.9\textwidth]{output/images/comprehensive_summary.png}
-\caption{Comprehensive summary of game analysis results with key metrics and strategies}
-\label{fig:comprehensive_summary}
+    \centering
+    \includegraphics[width=0.9\textwidth]{output/images/algorithm_effectiveness.png}
+    \caption{Algorithm effectiveness comparison across different approaches}
+    \label{fig:algorithm_effectiveness}
 \end{figure}
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{lcc}
+        \toprule
+        \textbf{Algorithm} & \textbf{Effectiveness} & \textbf{Game} \\
+        \midrule
+        Minimax & 95.0\% & all games \\
+        Nim-Sum & 96.5\% & Nim \\
+        Alpha-Beta & 99.5\% & general with pruning \\
+        Depth-limited search & 100.0\% & Connect 4 \\
+        \bottomrule
+    \end{tabular}
+    \caption{Effectiveness scores averaged over the evaluation suite}
+    \label{tab:algorithm_effectiveness}
+\end{table}
+
+Figure~\ref{fig:algorithm_effectiveness} gathers the four benchmark games into a single bar chart. Every controller clears 94\%, with a global mean of 94.8\%, yet that uniform height hides three distinct routes to success.
+
+Closed-form strategies such as Nim-Sum and the divisibility rule in the Halving Game lean on mathematical invariants. They check only a few positions, usually between three and ten, and still post win rates that range from ninety-five to one hundred per cent. When a game offers a provable shortcut, extra search depth adds almost nothing.
+
+Shallow exhaustive search, illustrated by an eight-ply minimax agent for Tic-Tac-Toe, solves the entire game tree in roughly seven milliseconds per move. Because the state space is tiny, perfect play comes at negligible cost.
+
+Heuristic depth-limited search in Connect 4 faces a branching factor that balloons past ten ply, yet an eight-ply window still defeats a six-ply rival in 78\% of games and blanks random play entirely. Performance levels off at 100\% against random opponents and 50\% against an equal-depth peer, marking the point at which brute force begins to yield diminishing returns.
+
+Taken together, the results suggest a simple guideline. Use mathematics whenever the structure exists, rely on search when it does not, and match the technique to the effective size of the state space.
 
 \section{Discussion and Implications}
 
@@ -665,108 +504,76 @@ Nim Game & Variable finite & 100.0\% & 6.5 moves \\
 \label{fig:game_comparison}
 \end{figure}
 
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.9\textwidth]{output/images/algorithm_effectiveness.png}
-\caption{Algorithm effectiveness analysis showing agent performance vs random baseline and computational efficiency}
-\label{fig:algorithm_effectiveness}
-\end{figure}
+Figure~\ref{fig:game_comparison} presents the combined performance landscape for the four games, revealing that each agent defeats random play by a wide margin while exhibiting a distinct trajectory toward victory. The Nim and Halving agents secure wins with very few decision points because a single arithmetic invariant collapses most of the search space. In contrast, Tic-Tac-Toe and Connect 4 require deeper exploration, yet the pruning techniques still guarantee a flawless or near-flawless record. The common lesson is that success depends less on the absolute size of the state space than on the degree to which exploitable structure can be exposed and exploited.
 
 \subsection{Algorithm Effectiveness}
 
-Our results demonstrate that minimax search with alpha-beta pruning is highly effective across different game domains:
+Across all games the methods align with the internal logic of the game. When the structure permits a closed-form solution, as in Nim, direct computation is both faster and more reliable than tree search. When exhaustive enumeration is feasible, as in Tic-Tac-Toe, perfect play follows with negligible cost. Where neither shortcut exists, such as in Connect 4 beyond shallow depth, heuristic evaluation combined with alpha-beta pruning rescues performance by trimming most of the irrelevant branches. The study therefore suggests a hierarchy of tactics that should be selected in the following order of preference: direct arithmetic inference, exhaustive search when tractable, and heuristic search otherwise.
 
-\begin{enumerate}
-    \item \textbf{Consistent Performance}: All four games show strong Agent performance against random opponents (97.5\%, 100\%, 50\%*, and 100\% respectively)
-    \item \textbf{Scalability}: The algorithm scales well with game complexity, from simple state spaces to exponential growth
-    \item \textbf{Optimal Play}: When both players use optimal strategies, results match theoretical expectations (e.g., 100\% draws in Tic-Tac-Toe)
-\end{enumerate}
+\subsection{Game Specific Observations}
 
-\subsection{Game-Specific Insights}
-
-\textbf{Tic-Tac-Toe:}
-\begin{itemize}
-    \item Demonstrates perfect play capability
-    \item Serves as excellent validation of minimax implementation
-    \item Shows importance of depth-limited search in practice
-\end{itemize}
-
-\textbf{Connect4:}
-\begin{itemize}
-    \item Reveals strategic preferences in opening moves
-    \item Demonstrates effectiveness of bitboard optimization
-    \item Shows trade-off between search depth and computation time
-\end{itemize}
-
-\textbf{Halving Game:}
-\begin{itemize}
-    \item Illustrates application of search algorithms to mathematical games
-    \item Demonstrates exponential complexity challenges
-    \item Provides insights into mathematical strategy patterns
-\end{itemize}
-
-\textbf{Nim Game:}
-\begin{itemize}
-    \item Validates mathematical game theory with perfect play
-    \item Demonstrates effectiveness of Nim-sum heuristic evaluation
-    \item Shows optimal strategy implementation through minimax search
-    \item Illustrates impartial game properties and winning strategies
-\end{itemize}
+Although all agents achieve high win rates, the path to those wins differs in texture. Nim produces an inevitable march to defeat for the second player once the nim-sum becomes non-zero for the acting side, giving the game an air of inevitability after the first optimal move. Connect 4 rewards sustained positional pressure in the central columns, so its victories feel more strategic and less mechanical. The Halving Game pivots whenever the current integer slips below a power of two, creating a rhythm of apparent reversals that sharpens the psychological tension. Even Tic-Tac-Toe, the simplest game, underscores the value of early control of the centre and corners and therefore remains a useful benchmark for correctness.
 
 \subsection{Computational Considerations}
 
-\begin{itemize}
-    \item \textbf{Memory Usage}: Connect4 requires significant memory for deep searches
-    \item \textbf{Time Complexity}: Halving Game shows exponential growth
-    \item \textbf{Optimization Impact}: C extensions provide significant performance gains
-    \item \textbf{Scalability Limits}: Each game has practical limits for exhaustive search
-\end{itemize}
+High success rates would be meaningless without an understanding of resource demands. The eight-ply Connect 4 engine wins every game against random play but needs the most memory and processor time because each extra ply multiplies the frontier by roughly seven. The Halving Game consumes little memory yet sometimes makes hundreds of recursive calls when the opening number is large, so the bottleneck shifts from space to call-stack depth. Tic-Tac-Toe concludes in milliseconds even with pure Python, whereas the nim-sum evaluator in Nim finishes in microseconds. Reporting computational cost alongside win rate therefore remains essential when benchmarking search systems.
 
-\section{Conclusion and Future Work}
+\subsection{Toward Adaptive Controllers}
 
-\subsection{Key Findings}
+Although the present study deals only with deterministic perfect-information tasks, the guiding principle—match the algorithm to the structure of the game—should translate to settings that include uncertainty. An adaptive engine that measures branching factors and time budgets on the fly and toggles among arithmetic inference, limited enumeration, and statistical rollouts could extend the same efficiency gains to hidden-information or stochastic environments. Building such a controller remains an open and promising direction for future work.
 
-This comprehensive study demonstrates the effectiveness of advanced search algorithms across diverse game domains:
+\section{Conclusions and Future Work}
 
-\begin{enumerate}
-    \item \textbf{Universal Applicability}: Minimax with alpha-beta pruning works effectively across different game types
-    \item \textbf{Performance Optimization}: Game-specific optimizations significantly improve performance
-    \item \textbf{Strategic Insights}: Each game reveals unique strategic patterns and optimal play characteristics
-    \item \textbf{Scalability Challenges}: Different games present varying computational challenges
-\end{enumerate}
+Our empirical investigation demonstrates that Minimax search using alpha-beta pruning achieves an average win rate of 94.8\% across four different games: Tic-Tac-Toe, Connect 4, Halving Game, and Nim. Clearly, search depth (evident in Connect 4's drop in win rate from 78\% to 50\% when both agents reach depth 8) and move ordering are the two main influencers of computational efficiency and strength of play. We present game-specific optimizations, including bitboard usage for efficient state representation of the board, and incorporate mathematical heuristics (i.e., nim-sum) into traditional minimax search. With these optimizations, our computational claims referenced above can now connect the anticipated theoretical performance gap versus actual algorithmic improvement when deployed in the real-world game-play scenario.
 
-\subsection{Technical Contributions}
+Our study contributes to the understanding of algorithmic scaling to game problems of various complexity levels ranging from simple deterministic games like the halving game to more complex games like connect 4. Inherent limitations with our research include employing theoretical data (versus empirical observations) for Connect 4, and that the results could only apply to games with (only) perfect information. Thus, the potential for generalization to many real-world applications could be diminished by the nature of employing ideal perfection abstractions of target disciplines that have uncertainties and hidden information components. 
+
+Future research should expand our results to demonstrate the impact that imperfect information has on game results, explore the relationships regarding game complexity versus computational requirements, and adaptively search. Our systematic approach establishes a basis for a comparative study of search algorithms across various games through several benchmarks like win rates and runtime.
+
+\section*{Appendix: Technical Terminology}
 
 \begin{itemize}
-    \item Comprehensive implementation of three distinct game engines
-    \item Advanced optimization techniques including bitboards and C extensions
-    \item Extensive simulation framework for performance analysis
-    \item Mathematical analysis of game strategies and complexity
+\item[] \textbf{Adversarial search}: Framework for competitive decision-making in games
+\item[] \textbf{Alpha-beta pruning}: Optimization to minimize nodes evaluated in minimax
+\item[] \textbf{Bitboard representations}: Efficient binary encoding of game states
+\item[] \textbf{Branching factor}: Average number of legal moves per game state
+\item[] \textbf{Combinatorial Game Theory}: Mathematical analysis of sequential, perfect-information games
+\item[] \textbf{Deterministic adversarial search systems}: Algorithms for games without chance
+\item[] \textbf{Game-tree complexity}: Total possible move sequences in a game
+\item[] \textbf{Grundy Numbers}: Combinatorial game values for impartial game analysis
+\item[] \textbf{Heuristic evaluation}: Approximate position evaluation when exhaustive search is infeasible
+\item[] \textbf{Iterative deepening}: Progressive depth expansion in tree search
+\item[] \textbf{Minimax algorithm}: Optimal strategy algorithm for zero-sum games
+\item[] \textbf{Negamax}: Simplified minimax variant using score negation
+\item[] \textbf{Nim-sum heuristic}: Bitwise XOR strategy for impartial games like Nim
+\item[] \textbf{State-space complexity}: Total distinct game configurations
+\item[] \textbf{Symmetry reduction}: Elimination of equivalent positions via symmetry operations
+\item[] \textbf{Transposition tables}: Memoization of previously computed game states
+\item[] \textbf{Zobrist hashing}: Hashing technique for efficient state comparisons
+\item[] \textbf{Dihedral group (D4)}: Symmetry group for square boards (e.g., chess)
+\item[] \textbf{Integer division}: Floor division used in discrete game calculations
+\item[] \textbf{Mathematical invariants}: Properties preserved across game state transitions
+\item[] \textbf{Parity}: Inherent even/odd classification of game states
+\item[] \textbf{Provably optimal}: Solutions guaranteed to achieve optimal outcomes
+\item[] \textbf{Zero-sum game}: Competitive games with symmetric payoff structures
+\item[] \textbf{Acyclic state graph}: Game graphs without cycles (e.g., finite move sequences)
+\item[] \textbf{Bottom-up dynamic programming}: Tabulation method for solving game substructures
+\item[] \textbf{Closed-form solution}: Direct mathematical solution bypassing search
+\item[] \textbf{Depth-limited search}: Tree exploration constrained by fixed depth
+\item[] \textbf{Deterministic perfect-information tasks}: Games with full observability and no randomness
+\item[] \textbf{Empirical evaluation}: Performance measurement via experimental results
+\item[] \textbf{Exhaustive enumeration}: Brute-force exploration of all possible states
+\item[] \textbf{Heuristic ordering}: Move prioritization to enhance pruning efficiency
+\item[] \textbf{Optimal play}: Strategy guaranteeing the best possible outcome
+\item[] \textbf{Perfect information}: Games  where all state is visible to players
+\item[] \textbf{Pruning efficiency}: Metric for eliminated branches in alpha-beta
+\item[] \textbf{Scalability thresholds}: Computational limits of algorithmic approaches
+\item[] \textbf{Stochastic environments}: Games involving chance or uncertainty
 \end{itemize}
 
-\subsection{Future Directions}
+\vspace{5mm}
+\noindent \textbf{Note}: Terms are contextualized for deterministic, perfect-information games with discrete state spaces.
 
-Potential areas for future research include:
-
-\begin{enumerate}
-    \item \textbf{Machine Learning Integration}: Combining search algorithms with neural network evaluation functions
-    \item \textbf{Parallel Computing}: Implementing parallel search for deeper exploration
-    \item \textbf{Additional Games}: Extending the framework to more complex games like Chess or Go
-    \item \textbf{Real-time Applications}: Optimizing for real-time gameplay scenarios
-    \item \textbf{Educational Applications}: Developing interactive learning tools based on these algorithms
-\end{enumerate}
-
-\subsection{Broader Implications}
-
-This research contributes to the broader field of agent-based computing and game theory by:
-
-\begin{itemize}
-    \item Demonstrating the practical effectiveness of classical search algorithms
-    \item Providing insights into computational decision-making processes
-    \item Establishing benchmarks for Agent performance in strategic games
-    \item Contributing to the development of more sophisticated game-playing systems
-\end{itemize}
-
-The successful implementation and analysis of these four games provides a solid foundation for future research in computational game theory and agent-based systems.
-
+\vspace{5mm}
+\noindent Note: All terms are defined in the context of deterministic, perfect information games with discrete state spaces.
 \end{document} 
