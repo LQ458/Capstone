@@ -35,7 +35,7 @@ def simulate_game(agent1, agent2):
     return results
 
 def create_random_vs_6_chart():
-    res = simulate_game('random', 6)
+    res = simulate_game('random', 8)
     rates = [res['X']/games*100, res['O']/games*100]
     labels = ['X: random', 'O: minimax d=6']
 
@@ -48,29 +48,10 @@ def create_random_vs_6_chart():
         ax.text(bar.get_x()+bar.get_width()/2, rate+1, f'{rate:.1f}%',
                 ha='center', va='bottom', fontsize=11)
     plt.tight_layout()
-    plt.savefig('output/images/c4_random_vs_6.png', dpi=300)
+    plt.savefig('output/images/c4_random_vs_8.png', dpi=300)
     plt.show()
 
-def create_depth6_vs_4_chart():
-    res = simulate_game(6, 4) 
-    draws = games - (res['X'] + res['O'])
-    print(f"6‑deep wins: {res['X']}, 4‑deep wins: {res['O']}, draws: {draws}")
-    rates = [res['X']/games*100, res['O']/games*100]
-    labels = ['X: d=6', 'O: d=4']
-
-    fig, ax = plt.subplots(figsize=(8, 5))
-    bars = ax.bar(labels, rates, color=['#C44E52', '#8172B3'], alpha=0.8)
-    ax.set_title('Minimax d=6 vs d=4', fontsize=14)
-    ax.set_ylabel('Win Rate (%)', fontsize=12)
-    ax.set_ylim(0, 100)
-    for bar, rate in zip(bars, rates):
-        ax.text(bar.get_x()+bar.get_width()/2, rate+1, f'{rate:.1f}%',
-                ha='center', va='bottom', fontsize=11)
-    plt.tight_layout()
-    plt.savefig('output/images/c4_d6_vs_d4.png', dpi=300)
-    plt.show()
-
-def create_depth8_vs_4_chart():
+def create_depth8_vs_6_chart():
     res = simulate_game(8, 6)
     rates = [res['X']/games*100, res['O']/games*100]
     labels = ['X: d=8', 'O: d=6']
@@ -87,7 +68,7 @@ def create_depth8_vs_4_chart():
     plt.savefig('output/images/c4_d8_vs_d6.png', dpi=300)
     plt.show()
 
-def create_depth6_vs_6_chart():
+def create_depth8_vs_8_chart():
     res = simulate_game(6, 6)
     rates = [res['X']/games*100, res['O']/games*100]
     labels = ['X: d=6', 'O: d=6']
@@ -101,11 +82,10 @@ def create_depth6_vs_6_chart():
         ax.text(bar.get_x()+bar.get_width()/2, rate+1, f'{rate:.1f}%',
                 ha='center', va='bottom', fontsize=11)
     plt.tight_layout()
-    plt.savefig('output/images/c4_d6_vs_d6.png', dpi=300)
+    plt.savefig('output/images/c4_d8_vs_d8.png', dpi=300)
     plt.show()
 
 if __name__ == '__main__':
     create_random_vs_6_chart()
-    create_depth6_vs_4_chart()
-    create_depth8_vs_4_chart()
-    create_depth6_vs_6_chart()
+    create_depth8_vs_6_chart()
+    create_depth8_vs_8_chart()
