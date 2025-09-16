@@ -1,0 +1,145 @@
+{
+  "tic_tac_toe": {
+    "agent_vs_random": {
+      "wins": 196,
+      "draws": 4,
+      "losses": 0,
+      "total_moves": 1140,
+      "win_rate": 98.0,
+      "draw_rate": 2.0,
+      "loss_rate": 0.0,
+      "avg_moves": 5.7
+    },
+    "agent_vs_agent": {
+      "wins": 0,
+      "draws": 200,
+      "losses": 0,
+      "total_moves": 1800,
+      "win_rate": 0.0,
+      "draw_rate": 100.0,
+      "loss_rate": 0.0,
+      "avg_moves": 9.0
+    },
+    "random_vs_random": {
+      "wins": 109,
+      "draws": 19,
+      "losses": 72,
+      "total_moves": 1514,
+      "win_rate": 54.50000000000001,
+      "draw_rate": 9.5,
+      "loss_rate": 36.0,
+      "avg_moves": 7.57
+    }
+  },
+  "nim": {
+    "configurations": {
+      "[3, 5, 7]": {
+        "wins": 40,
+        "losses": 0,
+        "total_moves": 288,
+        "nodes_evaluated": 164,
+        "win_rate": 100.0,
+        "avg_game_length": 7.2,
+        "avg_nodes_per_game": 4.1
+      },
+      "[1, 3, 5, 7]": {
+        "wins": 40,
+        "losses": 0,
+        "total_moves": 296,
+        "nodes_evaluated": 168,
+        "win_rate": 100.0,
+        "avg_game_length": 7.4,
+        "avg_nodes_per_game": 4.2
+      },
+      "[2, 4, 6]": {
+        "wins": 40,
+        "losses": 0,
+        "total_moves": 232,
+        "nodes_evaluated": 136,
+        "win_rate": 100.0,
+        "avg_game_length": 5.8,
+        "avg_nodes_per_game": 3.4
+      },
+      "[1, 2, 3, 4, 5]": {
+        "wins": 40,
+        "losses": 0,
+        "total_moves": 334,
+        "nodes_evaluated": 187,
+        "win_rate": 100.0,
+        "avg_game_length": 8.35,
+        "avg_nodes_per_game": 4.675
+      },
+      "[4, 5, 6]": {
+        "wins": 40,
+        "losses": 0,
+        "total_moves": 324,
+        "nodes_evaluated": 182,
+        "win_rate": 100.0,
+        "avg_game_length": 8.1,
+        "avg_nodes_per_game": 4.55
+      }
+    },
+    "nim_sum_vs_random": {
+      "wins": 200,
+      "losses": 0,
+      "total_moves": 1452,
+      "nodes_evaluated": 826,
+      "win_rate": 100.0,
+      "avg_moves": 7.26,
+      "avg_nodes": 4.13
+    },
+    "minimax_vs_random": {
+      "wins": 200,
+      "losses": 0,
+      "total_moves": 1480,
+      "nodes_evaluated": 0,
+      "win_rate": 100.0,
+      "avg_moves": 7.4,
+      "avg_nodes": 0.0
+    }
+  },
+  "halving": {
+    "number_10": {
+      "wins": 70,
+      "losses": 30,
+      "total_moves": 470,
+      "win_rate": 70.0,
+      "avg_moves": 4.7
+    },
+    "number_15": {
+      "wins": 100,
+      "losses": 0,
+      "total_moves": 590,
+      "win_rate": 100.0,
+      "avg_moves": 5.9
+    },
+    "number_20": {
+      "wins": 100,
+      "losses": 0,
+      "total_moves": 500,
+      "win_rate": 100.0,
+      "avg_moves": 5.0
+    },
+    "number_25": {
+      "wins": 100,
+      "losses": 0,
+      "total_moves": 752,
+      "win_rate": 100.0,
+      "avg_moves": 7.52
+    },
+    "number_30": {
+      "wins": 93,
+      "losses": 7,
+      "total_moves": 785,
+      "win_rate": 93.0,
+      "avg_moves": 7.85
+    },
+    "number_50": {
+      "wins": 91,
+      "losses": 9,
+      "total_moves": 979,
+      "win_rate": 91.0,
+      "avg_moves": 9.79
+    }
+  }
+}

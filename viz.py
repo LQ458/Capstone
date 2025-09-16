@@ -329,12 +329,9 @@ def collect_simulation_data():
     nim_data = run_nim_simulations(200)
     halving_data = run_halving_simulations(100)
     
-    connect4_data = None  # This triggers the default fallback in radar plot code
-    
     # Combine all data with exact structure expected by radar plots
     combined_data = {
         'tic_tac_toe': tic_tac_toe_data,
-        'connect4': connect4_data,
         'nim': nim_data,
         'halving': halving_data
     }
@@ -387,41 +384,6 @@ def calculate_game_metrics(data):
             'strategic_consistency': 98,     # Very consistent performance
             'algorithm_effectiveness': 90,   # Good but not perfect due to draws
             'theoretical_optimality': 95     # Near optimal play
-        }
-    
-    # Connect4 metrics
-    connect4_data = data.get('connect4')
-    if connect4_data and connect4_data is not None:
-        # Use depth 8 data if available
-        if 'agent_vs_random_depth8' in connect4_data:
-            c4_data = connect4_data['agent_vs_random_depth8']
-            metrics['Connect4'] = {
-                'win_rate': c4_data['win_rate'],
-                'avg_game_length': c4_data['avg_game_length'],
-                'computational_efficiency': 85,  # Good with C optimization
-                'strategic_consistency': 100,    # Perfect consistency at depth 8
-                'algorithm_effectiveness': 100,  # Excellent with alpha-beta + heuristics
-                'theoretical_optimality': 88     # Strong but not mathematically perfect
-            }
-        else:
-            # Fallback with estimated values
-            metrics['Connect4'] = {
-                'win_rate': 100,
-                'avg_game_length': 11,
-                'computational_efficiency': 85,
-                'strategic_consistency': 100,
-                'algorithm_effectiveness': 100,
-                'theoretical_optimality': 88
-            }
-    else:
-        # Default Connect4 values
-        metrics['Connect4'] = {
-            'win_rate': 100,
-            'avg_game_length': 11,
-            'computational_efficiency': 85,
-            'strategic_consistency': 100,
-            'algorithm_effectiveness': 100,
-            'theoretical_optimality': 88
         }
     
     # Nim metrics
@@ -596,7 +558,6 @@ def create_radar_plot(metrics):
     insights = [
         "Key Insights:",
         f"• Nim achieves perfect mathematical optimality",
-        f"• Connect4 shows excellent algorithm effectiveness", 
         f"• Tic-Tac-Toe demonstrates high consistency",
         f"• Halving game shows strategic variability"
     ]
@@ -834,8 +795,8 @@ def generate_all_radar_plots(data):
 def main():
     """Main function: Run simulations then generate radar plots"""
     print("=== Comprehensive Game Analysis: Simulation + Visualization ===")
-    print("Running simulations for 3 games (Connect4 simulation removed)")
-    print("Generating identical radar plots with default Connect4 data")
+    print("Running simulations for 3 games")
+    print("Generating identical radar plots")
     print()
     
     try:
@@ -847,7 +808,6 @@ def main():
         print(f"  Nim: {simulation_data['nim']['nim_sum_vs_random']['win_rate']:.1f}% win rate")
         avg_halving = np.mean([simulation_data['halving'][k]['win_rate'] for k in simulation_data['halving']])
         print(f"  Halving: {avg_halving:.1f}% average win rate")
-        print(f"  Connect4: Using default data (simulation removed)")
         print()
         
         #Generate radar plot visualizations
